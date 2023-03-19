@@ -32,7 +32,7 @@ router.get('/list/:type/:name/:page', (req, res) => {
                 listLength = 6;
                 break;
             default:
-                listLength = 10;
+                listLength = 25;
                 break;
         }
 
@@ -92,21 +92,20 @@ router.post('/:name/galleryWrite', upload('client/public/uploads/','file'), (req
 
 router.post('/:name/write', (req, res) => {
     let param = [];
-    let num = 0;
     
     let sql2 = `
-       SELECT * FROM ${req.params.name} WHERE w_comment=0;
+       SELECT * FROM ${req.params.name} WHERE w_comment=0 ORDER BY w_num DESC LIMIT 1
     `
+
     db.query(sql2,[],(err2, rows2)=> {
         if (err2) throw err;
-        num = rows2.length + 1;
         let sql = `
                 INSERT INTO ${req.params.name} (w_num, w_parent, subject, content, w_time, user_id, board_type) 
                 VALUE (?,?,?,?,?,?,?)
             `;
         param = [
-            num,
-            num,
+            rows2[0].w_num+1,
+            rows2[0].w_num+1,
             req.body.subject,
             req.body.content,
             req.body.w_time,
@@ -129,16 +128,29 @@ router.post('/:name/write', (req, res) => {
 
 
 router.post('/list/:name/contents/:w_num', (req, res) => {
-    const w_num = req.params.w_num
+    const w_num = req.body.w_num
     let sql = `
         SELECT *
-        FROM ${ req.params.name }
+        FROM ${ req.body.name }
         WHERE w_num=?
     `;
-
     db.query(sql, [w_num], (err, rows) => {
         if (err) throw err;
         res.send(rows[0])
+    })
+});
+
+router.post('/list/:name/varValue/:w_num', (req, res) => {
+    let hit = req.body.hit;
+    let sql = `
+        UPDATE ${req.body.name}
+        SET hit=?
+        WHERE w_num=${req.body.w_num} AND w_comment=0; 
+    `;
+    console.log(hit);
+    db.query(sql, [hit], (err, rows) => {
+        if (err) throw err;
+        res.status(200).json({hit:hit})
     })
 })
 
@@ -174,7 +186,7 @@ router.delete('/list/:name/delete/:w_num', (req, res) => {
             let sql3= `SET @COUNT = 0;`
             db.query(sql3,[],(err2)=>{
                 if (err2) throw err2;
-                let sql4= `UPDATE ${req.params.name} SET w_num=@COUNT:=@COUNT+1 WHERE w_comment=0;`
+                let sql4= `UPDATE ${req.params.name} SET w_id=@COUNT:=@COUNT+1;`
                 db.query(sql4, [],(err3)=>{
                     if (err3) throw err3;
                 });
@@ -228,5 +240,18 @@ router.post('/list/:name/reply/:w_num',(req, res) => {
     })
 })
 
+router.delete('/list/:name/replyDelete/:w_id',(req, res) => {
+    let sql =`
+        DELETE FROM ${req.params.name}
+        WHERE w_id=${req.params.w_id}
+    `;
+
+    console.log(req.body.name+","+req.body.w_id)
+    let param = []
+    db.query(sql, param, (err,rows) => {
+        if (err) throw err;
+        res.send('댓글 삭제')
+    })
+})
 
 module.exports = router;

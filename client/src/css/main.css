@@ -2,7 +2,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  line-height: 1.5em; }
+  line-height: 1.5em;
+  letter-spacing: -.5px; }
 
 ul li,
 ol li {
@@ -24,27 +25,29 @@ textarea {
   resize: none; }
 
 #root {
-  padding: 0 4%;
+  padding: 0 0 0 125px;
   width: 100%;
+  height: 100vh;
+  overflow: hidden;
   background: #f6f8fc; }
   #root header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    width: 125px;
     border-right: 1px solid #555;
     z-index: 100; }
     #root header .logo {
       position: absolute;
-      left: 4%;
       font-size: 30px; }
     #root header nav {
       width: 100%;
       position: relative; }
       #root header nav.top-nav {
-        width: 100%;
-        height: 60px;
-        background: #f6f8fc; }
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 7vh;
+        background: #f6f8fc;
+        z-index: 2; }
         #root header nav.top-nav ul {
           position: absolute; }
           #root header nav.top-nav ul.register {
@@ -88,9 +91,9 @@ textarea {
         box-shadow: 1px 1px 1px 1px #eeecec;
         left: 0;
         top: 0;
-        width: 80px;
+        width: 125px;
         height: 100vh;
-        z-index: 1; }
+        z-index: 3; }
         #root header nav.left-nav ul {
           position: absolute;
           top: 50%;
@@ -141,10 +144,11 @@ textarea {
             z-index: 99; }
   #root .container {
     position: relative;
-    width: 90%;
-    background: #fff;
-    left: 50%;
-    transform: translateX(-50%); }
+    width: 100%;
+    height: 100vh;
+    overflow-y: scroll;
+    padding: 0 5%;
+    background: #fff; }
     #root .container .myName {
       position: absolute;
       top: 50%;
@@ -176,19 +180,18 @@ textarea {
           #root .container .myPage div p:last-of-type {
             width: 65%; }
     #root .container .board {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 60vw; }
+      margin-top: 7vh;
+      width: 100%; }
+      #root .container .board-Mini {
+        width: 60%;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%); }
       #root .container .board-type-normal {
-        box-shadow: 0px 0px 2px #888;
-        border-radius: 10px;
-        padding: 15px; }
+        padding: 5px 5% 0; }
         #root .container .board-type-normal table {
           width: 100%;
           border-collapse: collapse;
-          border-radius: 5px;
           overflow: hidden; }
           #root .container .board-type-normal table tbody tr th {
             padding-bottom: 5px;
@@ -201,13 +204,19 @@ textarea {
             #root .container .board-type-normal table tbody tr th:nth-of-type(3) {
               width: 17%; }
             #root .container .board-type-normal table tbody tr th:nth-of-type(4) {
-              width: 30%; }
+              width: 10%; }
+            #root .container .board-type-normal table tbody tr th:nth-of-type(5) {
+              width: 20%; }
           #root .container .board-type-normal table tbody tr th {
             background: rgba(190, 131, 131, 0.5); }
           #root .container .board-type-normal table tbody tr td {
             padding: 2px;
             border-bottom: 1px solid rgba(87, 79, 79, 0.5);
             text-align: center; }
+            #root .container .board-type-normal table tbody tr td:nth-of-type(2), #root .container .board-type-normal table tbody tr td:nth-of-type(5) {
+              text-align: left; }
+            #root .container .board-type-normal table tbody tr td:nth-of-type(2) {
+              padding-left: 3%; }
       #root .container .board-type-gallery table tbody {
         display: flex;
         flex-wrap: wrap;
@@ -243,7 +252,7 @@ textarea {
               text-align: right; }
       #root .container .board-nav {
         display: flex;
-        margin: 1%   0; }
+        margin: 1% 0 0; }
         #root .container .board-nav > a {
           display: block; }
           #root .container .board-nav > a.left {
@@ -302,7 +311,7 @@ textarea {
           position: relative;
           margin-bottom: 20px;
           border-bottom: .5px solid #cecdcd;
-          padding: 5px 0 10px; }
+          padding: 5px 20px 10px; }
         #root .container .board-content-sbj {
           width: 100%;
           padding-left: 10px;
@@ -313,7 +322,11 @@ textarea {
           justify-content: flex-end;
           flex-wrap: wrap; }
           #root .container .board-content-right p {
-            color: #888; }
+            color: #888;
+            line-height: 2.2em;
+            font-size: 17px; }
+            #root .container .board-content-right p.hit {
+              margin-right: 15px; }
             #root .container .board-content-right p.user {
               font-size: 17px;
               line-height: 2.2em;
@@ -365,15 +378,35 @@ textarea {
           font-size: 14px;
           display: flex; }
           #root .container .board .reply-list .reply-info .reply-userId {
+            padding-left: 2%;
             font-size: 1em;
             width: 15%; }
           #root .container .board .reply-list .reply-info .reply-content {
-            width: 65%;
+            width: 70%;
+            padding: 0 2%;
             margin-right: 5%; }
           #root .container .board .reply-list .reply-info .reply-time {
             width: 10%;
             font-size: 0.9em;
             white-space: nowrap; }
+          #root .container .board .reply-list .reply-info .reply-varValue {
+            width: 5%;
+            text-align: center;
+            position: relative; }
+            #root .container .board .reply-list .reply-info .reply-varValue .reply-varValue-depth {
+              display: none;
+              position: absolute;
+              z-index: 99;
+              width: 120%;
+              top: 0;
+              left: 100%;
+              background: #fff; }
+              #root .container .board .reply-list .reply-info .reply-varValue .reply-varValue-depth.on {
+                display: block; }
+              #root .container .board .reply-list .reply-info .reply-varValue .reply-varValue-depth li {
+                padding: 2%;
+                border: 1px solid #cecdcd;
+                text-align: center; }
     #root .container form {
       position: absolute;
       top: 50%;

@@ -67,6 +67,10 @@
                 "class":"userName"
             },
             {
+                "name":"조회수",
+                "class":"hit"
+            },
+            {
                 "name":"작성일자",
                 "class":"time"
             }

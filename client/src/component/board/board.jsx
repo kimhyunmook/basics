@@ -69,6 +69,7 @@ function Board ({className}) {
                                 num={ el.w_num } 
                                 subject={ el.subject } 
                                 user={ el.user_id } 
+                                hit={ el.hit }
                                 time={ el.w_time }  
                             />
                         )
@@ -182,7 +183,7 @@ function Board ({className}) {
     )
 }
 
-function Board_Normal({ className,num,subject,user,time }) {
+function Board_Normal({ className,num,subject,user,hit,time }) {
     const path = window.location.pathname.split('/');
 
     return(
@@ -194,6 +195,7 @@ function Board_Normal({ className,num,subject,user,time }) {
                 <Link to={`/board/${ path[2] }/contents/${ num }`}>{ subject }</Link>
             </td>
             <td className='user'>{ user }</td>
+            <td className="hit">{ hit }</td>
             <td className='time'>{ time }</td>
         </tr>
     )

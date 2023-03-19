@@ -23,7 +23,7 @@ function ModifyBoard () {
             setUserInfo(res)
         })
 
-        dispatch(lookContent({},{
+        dispatch(lookContent({
             name:path[2],
             w_num:path[4]
         })) 

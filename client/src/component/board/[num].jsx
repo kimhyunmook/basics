@@ -2,9 +2,9 @@ import { useLayoutEffect,useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../../actions/user_action'
-import { lookContent, deleteContent, replyAction, replyList } from '../../actions/board_action'
+import { lookContent, deleteContent, replyAction, replyList, varValue, replyDelete } from '../../actions/board_action'
 import Container from '../common/container';
-import { DeleteIcon, FixIcon, ListIcon, PenIcon, Xmark } from '../common/fontawsome';
+import { DeleteIcon, FixIcon, ListIcon, Xmark, MenuIcon } from '../common/fontawsome';
 import { getDate } from '../../actions/tool_action';
 import Reply from './reply';
 
@@ -13,6 +13,7 @@ function ContentBoard () {
     const [userInfo,setUserInfo] = useState('');
     const [boardInfo,setBoardInfo] = useState('');
     const [w_comment, setW_comment] = useState('');
+    const [hit, setHit] = useState('');
     const [replyText, setReplyText] = useState('');
     const [replyView, setReplyView] = useState([]);
     const [replyState, setReplyState] = useState(false);
@@ -37,7 +38,7 @@ function ContentBoard () {
             deleteContent(body,{
                 name:path[2],
                 w_num:path[4]
-            }).payload.then(res=>{
+            }).payload.then(()=>{
                 alert('삭제되었습니다.')
                 navigate(`/board/${path[2]}/1`)
             })
@@ -63,13 +64,12 @@ function ContentBoard () {
             w_time:getDate(),
             content:replyText,
             user_id:userInfo.id,
-            board_type:boardInfo.board_type
-        }
-
-        replyAction(body,{
+            board_type:boardInfo.board_type,
             name:path[2],
             w_num:path[4]
-        }).payload
+        }
+
+        replyAction(body).payload
         .then(res=>{ 
             if(res.reply === 'success'){
                 window.location.reload();
@@ -77,44 +77,70 @@ function ContentBoard () {
         })
     }
 
-    useLayoutEffect(()=>{
-        auth({}).payload
-        .then(res=>{
-            setUserInfo(res)
-        })
+    const replyVarValueEventHandler = (event) => {
+        event.preventDefault();
+        const depth = event.currentTarget.nextSibling;
+        if (depth.classList[1] === undefined) {
+            depth.classList.add('on')
+        } else {
+            depth.classList.remove('on');
+        }
+    }
 
-        dispatch(lookContent({},{
+    const replyDel= (event) => {
+        event.preventDefault();
+        let replyTraget = event.currentTarget.classList[1];
+        console.log(replyTraget);
+        replyDelete({
+            name:path[2],
+            w_id:replyTraget
+        }).payload.then(()=>{
+            window.location.reload();
+        })
+    }
+
+    useLayoutEffect(()=>{
+        auth({}).payload.then(res => { setUserInfo(res) })
+
+        dispatch(lookContent({
             name:path[2],
             w_num:path[4]
         }))
         .then(res=>{
+            varValue({
+                name:path[2],
+                w_num:path[4],
+                hit:res.payload.hit+1
+            }).payload.then((res2)=>{
+                setHit(res2.hit);
+            })
             setBoardInfo(res.payload);
             setW_comment(res.payload.w_comment);
         });
 
-        replyList({},{
+        replyList({
             name:path[2],
             w_num:path[4]
         }).payload
         .then(res=>{
             setReplyView(res.array);
         })
-
     },[])
-
-
     return(
         <Container>
-            <div className="board">
+            <div className="board board-Mini">
                 <div className="board-content">
                    
                     <div className="flex-box subjectLine">
                         <div className="board-content-sbj">
-                            { boardInfo.subject }
+                            { boardInfo.subject } 
                         </div>
                         <div className="board-content-right">
+                            <p className="hit">
+                                조회수: { hit }
+                            </p>
                             <p className='user'>
-                                { boardInfo.user_id }
+                                작성자: { boardInfo.user_id }
                             </p>
                             <p className='time'>
                                 { boardInfo.w_time }
@@ -166,7 +192,7 @@ function ContentBoard () {
                         {
                             replyView.map((el, index)=>{
                                 return(
-                                    <li key={ index } className="reply-info">
+                                    <li className="reply-info" key={ index }>
                                         <p className="reply-userId">
                                             { el.user_id }
                                         </p>
@@ -176,6 +202,17 @@ function ContentBoard () {
                                         <p className="reply-time">
                                             { el.w_time }
                                         </p>
+                                     
+                                        <a href="#" className='reply-varValue' >
+                                            <p onClick={ replyVarValueEventHandler }>
+                                                <MenuIcon />
+                                            </p>
+                                            <ul className="reply-varValue-depth">
+                                                <li className={`delete ${el.w_id}`} onClick={ replyDel }>
+                                                    삭제
+                                                </li>
+                                            </ul> 
+                                        </a>
                                     </li>
                                 )
                             })

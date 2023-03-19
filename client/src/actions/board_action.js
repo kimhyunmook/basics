@@ -31,11 +31,20 @@ export function listBoard(dataSubmit, config) {
     }
 }
 
-export function lookContent(dataSubmit, config) {
-    const request = axios.post(`/api/board/list/${config.name}/contents/${config.w_num}`, dataSubmit)
+export function lookContent(dataSubmit) {
+    const request = axios.post(`/api/board/list/${dataSubmit.name}/contents/${dataSubmit.w_num}`, dataSubmit)
         .then(response => response.data)
     return {
         type: 'look_content',
+        payload: request
+    }
+}
+
+export function varValue(dataSubmit) {
+    const request = axios.post(`/api/board/list/${dataSubmit.name}/varValue/${dataSubmit.w_num}`, dataSubmit)
+     .then(response => response.data)
+    return {
+        type: 'hit',
         payload: request
     }
 }
@@ -67,11 +76,20 @@ export function replyAction(dataSubmit, config) {
     }
 }
 
-export function replyList(dataSubmit, config) {
-    const request = axios.post(`/api/board/list/${config.name}/reply/${config.w_num}`,dataSubmit)
+export function replyList(dataSubmit) {
+    const request = axios.post(`/api/board/list/${dataSubmit.name}/reply/${dataSubmit.w_num}`,dataSubmit)
         .then(request => request.data)
     return {
         tpye: 'reply_list',
+        payload: request
+    }
+}
+
+export function replyDelete(dataSubmit) {
+    const request = axios.delete(`/api/board/list/${dataSubmit.name}/replyDelete/${dataSubmit.w_id}`,dataSubmit)
+        .then(request => request.data)
+    return {
+        tpye: 'reply_delete',
         payload: request
     }
 }
