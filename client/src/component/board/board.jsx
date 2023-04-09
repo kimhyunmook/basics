@@ -70,7 +70,7 @@ function Board ({className}) {
                                 subject={ el.subject } 
                                 user={ el.user_id } 
                                 hit={ el.hit }
-                                time={ el.w_time }  
+                                time={ el.d_time }  
                             />
                         )
                     })
@@ -90,7 +90,7 @@ function Board ({className}) {
                                 num={ el.w_num } 
                                 subject={ el.subject } 
                                 user={ el.user_id } 
-                                time={ el.w_time } 
+                                time={ el.d_time } 
                                 img={`http://localhost:3005/uploads/${el.img}`} 
                             />
                         )

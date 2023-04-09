@@ -21,6 +21,11 @@
             "href":"/xlsx",
             "icon":2,
             "description":"엑셀"
+        },
+        {
+            "name":"ADM",
+            "href":"/adm",
+            "description":"관리자"
         }
     ],
     "board": {

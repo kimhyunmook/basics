@@ -8,6 +8,10 @@ const {
     auth
 } = require('../middleware/auth');
 
+const {
+    readSQL
+} = require('../util');
+
 router.use(cookieParser());
 
 router.post('/signUp', (req, res) => {
@@ -17,12 +21,14 @@ router.post('/signUp', (req, res) => {
         req.body.email,
         req.body.phone,
         req.body.name,
+        req.body.gender
     ];
     var sql = `
         SELECT * 
         FROM users 
         WHERE id=?
     `
+
     db.query(sql, param[0], (err, rows, fileds) => {
         if (err) throw err;
         let condition
@@ -36,17 +42,11 @@ router.post('/signUp', (req, res) => {
             condition = {
                 signUp: true
             }
-            bcrypt.hash(param[1], saltRounds, (err_, hash) => {
-                if (err_) throw err_;
-
-                sql = `
-                    INSERT INTO users (id,password,email,phone,name,role) 
-                    VALUES (?,?,?,?,?,0)
-                    `;
+            bcrypt.hash(param[1], saltRounds, (err1, hash) => {
+                if (err1) throw err1;
                 param[1] = hash;
-                db.query(sql, param, (err__, rows__) => {
-                    if (err__) throw err__;
-
+                db.query(readSQL('user/insert.sql'), param, (err2, rows2) => {
+                    if (err2) throw err2;
                 });
             });
         }
@@ -114,10 +114,8 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/logout', auth, async (req, res) => {
-    let cookie = req.cookies.x_token;
-    let token = cookie.split('id=');
-    let id = token[1];
-
+    let token = req.user.login_token;
+    let id = req.user.id;
     var sql = `
         SELECT * 
         FROM users
@@ -125,7 +123,7 @@ router.post('/logout', auth, async (req, res) => {
     `;
     var param = [
         id,
-        cookie
+        token
     ]
     db.query(sql, param, (err) => {
         if (err) throw err;
@@ -138,27 +136,20 @@ router.post('/logout', auth, async (req, res) => {
         `;
         param = [
             id,
-            cookie
+            token
         ]
-        db.query(sql, param, (err_) => {
-            if (err_) throw err_;
+        db.query(sql, param, (err1) => {
+            if (err1) throw err1;
             res.redirect('/')
         })
     })
 })
 
 router.get('/auth', auth, (req, res) => {
-    res.send({
-        id: req.user.id,
-        isAuth: true,
-        isAdmin: req.user.role === 0 ? false : true,
-        name: req.user.name,
-        email: req.user.email,
-        phone: req.user.phone
-    });
+    res.send(req.user);
 });
 
-router.post('/edit', (req, res) => {
+router.put('/edit', (req, res) => {
     var sql = `
         UPDATE users 
         SET password=?, phone=?, email=?
@@ -174,8 +165,8 @@ router.post('/edit', (req, res) => {
         if (err) throw err;
         param[0] = hash;
 
-        db.query(sql, param, (err_) => {
-            if (err_) throw err_;
+        db.query(sql, param, (err1) => {
+            if (err1) throw err1;
 
             res.status(200).json({
                 edit: true
@@ -184,7 +175,7 @@ router.post('/edit', (req, res) => {
     });
 });
 
-router.post('/delete', (req, res) => {
+router.delete('/delete', (req, res) => {
     let sql = `
         DELETE FROM users
         WHERE id=?

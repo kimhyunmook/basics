@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from '../../actions/user_action'
 import { lookContent, deleteContent, replyAction, replyList, varValue, replyDelete } from '../../actions/board_action'
 import Container from '../common/container';
-import { DeleteIcon, FixIcon, ListIcon, Xmark, MenuIcon } from '../common/fontawsome';
+import { DeleteIcon, FixIcon, ListIcon, Xmark, MenuIcon, PenIcon } from '../common/fontawsome';
 import { getDate } from '../../actions/tool_action';
 import Reply from './reply';
 
@@ -62,6 +62,7 @@ function ContentBoard () {
         let body ={
             w_comment:w_comment, 
             w_time:getDate(),
+            d_time:getDate('display'),
             content:replyText,
             user_id:userInfo.id,
             board_type:boardInfo.board_type,
@@ -186,7 +187,7 @@ function ContentBoard () {
                 <div className="reply">
                     {
                         replyState === true ? 
-                        <Reply text={ replyText } textEvent={ onReplyHandler } click={ reply } /> : null
+                        <Reply id={ userInfo.id } text={ replyText } textEvent={ onReplyHandler } click={ reply } /> : null
                     }
                     <ul className="reply-list">
                         {
@@ -194,13 +195,16 @@ function ContentBoard () {
                                 return(
                                     <li className="reply-info" key={ index }>
                                         <p className="reply-userId">
-                                            { el.user_id }
+                                            {userInfo.id === boardInfo.user_id ? <PenIcon /> : null}
+                                            <span style={{marginLeft:'5px'}}>
+                                                { el.user_id }
+                                            </span>
                                         </p>
                                         <p className="reply-content">
                                             { el.content }
                                         </p>
                                         <p className="reply-time">
-                                            { el.w_time }
+                                            { el.d_time }
                                         </p>
                                      
                                         <a href="#" className='reply-varValue' >
@@ -210,6 +214,9 @@ function ContentBoard () {
                                             <ul className="reply-varValue-depth">
                                                 <li className={`delete ${el.w_id}`} onClick={ replyDel }>
                                                     삭제
+                                                </li>
+                                                <li>
+                                                    추천
                                                 </li>
                                             </ul> 
                                         </a>

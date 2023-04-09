@@ -1,3 +1,4 @@
+@charset "UTF-8";
 * {
   margin: 0;
   padding: 0;
@@ -21,22 +22,37 @@ a {
   justify-content: center;
   align-items: center; }
 
+.disNo {
+  display: none; }
+
+.disYes {
+  display: block; }
+
 textarea {
   resize: none; }
 
 #root {
-  padding: 0 0 0 125px;
   width: 100%;
   height: 100vh;
-  overflow: hidden;
-  background: #f6f8fc; }
+  overflow: hidden; }
   #root header {
-    width: 125px;
+    background: #1f222a;
+    width: 100%;
+    height: 65px;
     border-right: 1px solid #555;
+    display: flex;
+    padding: 0 2%;
     z-index: 100; }
     #root header .logo {
-      position: absolute;
-      font-size: 30px; }
+      width: 7%;
+      z-index: 15;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 1% 0; }
+      #root header .logo a {
+        text-align: center;
+        font-size: 30px; }
     #root header nav {
       width: 100%;
       position: relative; }
@@ -45,12 +61,11 @@ textarea {
         left: 0;
         top: 0;
         width: 100vw;
-        height: 7vh;
-        background: #f6f8fc;
+        height: 65px;
         z-index: 2; }
         #root header nav.top-nav ul {
           position: absolute; }
-          #root header nav.top-nav ul.register {
+          #root header nav.top-nav ul.login-box {
             background: #fff;
             border: 2px solid #eee;
             border-radius: 10px;
@@ -60,64 +75,67 @@ textarea {
             transform: translateY(0);
             display: inline-flex;
             justify-content: space-between; }
-            #root header nav.top-nav ul.register li.id {
+            #root header nav.top-nav ul.login-box li.id {
               color: #41ee0d; }
-              #root header nav.top-nav ul.register li.id .id-text {
+              #root header nav.top-nav ul.login-box li.id .id-text {
                 color: #000;
                 font-weight: 400;
                 margin-left: 5px; }
-            #root header nav.top-nav ul.register li.icon-box {
+            #root header nav.top-nav ul.login-box li.icon-box {
               width: 35%; }
-              #root header nav.top-nav ul.register li.icon-box ul {
+              #root header nav.top-nav ul.login-box li.icon-box ul {
                 display: flex;
                 align-items: space-between; }
-                #root header nav.top-nav ul.register li.icon-box ul li {
+                #root header nav.top-nav ul.login-box li.icon-box ul li {
                   margin-right: 15px; }
-                  #root header nav.top-nav ul.register li.icon-box ul li a {
+                  #root header nav.top-nav ul.login-box li.icon-box ul li a {
                     text-align: center; }
-              #root header nav.top-nav ul.register li.icon-box a {
+              #root header nav.top-nav ul.login-box li.icon-box a {
                 text-align: center;
                 display: block;
                 font-size: 18px; }
-                #root header nav.top-nav ul.register li.icon-box a.logout {
+                #root header nav.top-nav ul.login-box li.icon-box a.logout {
                   cursor: pointer;
-                  color: red; }
-                  #root header nav.top-nav ul.register li.icon-box a.logout:hover {
-                    background: rgba(190, 131, 131, 0.5);
-                    color: #fff; }
-      #root header nav.left-nav {
-        position: absolute;
-        background: #eaf1fb;
-        box-shadow: 1px 1px 1px 1px #eeecec;
-        left: 0;
-        top: 0;
-        width: 125px;
-        height: 100vh;
+                  color: #000000; }
+                  #root header nav.top-nav ul.login-box li.icon-box a.logout:hover {
+                    color: red; }
+      #root header nav.menu-nav {
+        width: 100%;
+        height: 65px;
         z-index: 3; }
-        #root header nav.left-nav ul {
+        #root header nav.menu-nav ul {
           position: absolute;
           top: 50%;
+          height: 100%;
           left: 0;
-          transform: translateY(-50%); }
-          #root header nav.left-nav ul li {
+          transform: translateY(-50%);
+          display: flex; }
+          #root header nav.menu-nav ul li {
             width: 100%;
+            max-width: 80px;
+            height: 100%;
             position: relative;
             text-align: center;
-            font-size: 16px;
-            padding: 20px 0px 20px 0px; }
-        #root header nav.left-nav .description {
+            font-size: 16px; }
+            #root header nav.menu-nav ul li a {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100%;
+              color: #fff; }
+            #root header nav.menu-nav ul li:hover {
+              background: #8e9fff; }
+              #root header nav.menu-nav ul li:hover > a {
+                transition: 0.5s;
+                color: #fff;
+                transform: scale(1.1); }
+        #root header nav.menu-nav .description {
           top: 80%; }
       #root header nav > ul {
         width: 100%; }
         #root header nav > ul > li {
           position: relative;
           transition: 0.5s; }
-          #root header nav > ul > li:hover {
-            background: rgba(190, 131, 131, 0.5); }
-            #root header nav > ul > li:hover > a {
-              transition: 0.5s;
-              color: #fff;
-              transform: scale(1.1); }
           #root header nav > ul > li a {
             position: relative;
             display: block;
@@ -126,29 +144,247 @@ textarea {
       #root header nav .depth1 {
         position: absolute;
         z-index: 99;
-        top: 0;
-        left: 100%;
-        width: 130%;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
         background: #fff;
         box-shadow: 1px 1px 1px 2px #eee;
-        padding: 10px 5px;
-        border-radius: 5px; }
-        #root header nav .depth1.disYes {
-          display: block; }
-        #root header nav .depth1.disNo {
-          display: none; }
+        overflow: hidden; }
         #root header nav .depth1 ul {
           position: initial;
-          transform: initial; }
-          #root header nav .depth1 ul li a {
-            z-index: 99; }
+          transform: initial;
+          display: block; }
+          #root header nav .depth1 ul li {
+            height: 50px; }
+            #root header nav .depth1 ul li a {
+              color: #000;
+              z-index: 99; }
   #root .container {
     position: relative;
     width: 100%;
     height: 100vh;
     overflow-y: scroll;
-    padding: 0 5%;
+    padding: 65px 15%;
     background: #fff; }
+    #root .container.download {
+      width: 70%;
+      margin: auto; }
+      #root .container.download > form {
+        width: 100%;
+        height: 60vh;
+        position: relative;
+        overflow: hidden;
+        transition: 0.5s; }
+        #root .container.download > form h1 {
+          padding: 0 1%;
+          margin-bottom: 20px; }
+        #root .container.download > form > div.setting_cover {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          flex-wrap: nowrap;
+          display: flex;
+          transition: 0.5s; }
+          #root .container.download > form > div.setting_cover div {
+            padding: 0 1%;
+            width: 100%; }
+        #root .container.download > form > div p.terms {
+          margin: 20px auto;
+          background: #eee;
+          border: 3px solid #999;
+          border-radius: 5px;
+          width: 95%;
+          height: 50%;
+          padding: 5px;
+          overflow-y: scroll; }
+        #root .container.download > form > div h3 {
+          text-align: right; }
+          #root .container.download > form > div h3 .custom-slick-next {
+            position: inherit; }
+        #root .container.download > form ul li {
+          border-top: 1px solid #cecdcd;
+          margin: 0;
+          height: 60px; }
+          #root .container.download > form ul li:last-of-type {
+            border-bottom: 1px solid #cecdcd; }
+          #root .container.download > form ul li label {
+            width: 25%;
+            margin: 0;
+            padding-left: 2%;
+            display: flex;
+            align-items: center; }
+            #root .container.download > form ul li label span {
+              padding-left: 6%;
+              width: 100%; }
+              #root .container.download > form ul li label span::before {
+                content: "▶";
+                margin-right: 20px; }
+          #root .container.download > form ul li .insert-box {
+            padding-left: 2%;
+            display: flex;
+            align-items: center;
+            width: 75%; }
+            #root .container.download > form ul li .insert-box input {
+              width: 40%;
+              font-size: 16px;
+              padding-left: 1%;
+              margin: 0; }
+    #root .container .adm {
+      height: 80vh;
+      box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3), -5px -5px 10px rgba(170, 176, 255, 0.3); }
+      #root .container .adm-list {
+        border: 1px solid;
+        overflow: hidden;
+        cursor: pointer; }
+        #root .container .adm-list-name {
+          padding: 10px;
+          border: 1px solid;
+          display: flex;
+          justify-content: space-between; }
+          #root .container .adm-list-name::after {
+            content: "✔";
+            display: block; }
+        #root .container .adm-list-content {
+          height: 0;
+          transition: .5s; }
+          #root .container .adm-list-content.on {
+            height: inherit; }
+          #root .container .adm-list-content ul li {
+            margin: 0; }
+    #root .container .menu {
+      display: flex;
+      flex-wrap: wrap; }
+      #root .container .menu .main-menuList {
+        width: 32%;
+        margin: .6%;
+        height: 17vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3), -5px -5px 10px rgba(170, 176, 255, 0.3);
+        transition: .5s; }
+        #root .container .menu .main-menuList a {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
+          width: 100%;
+          height: 100%;
+          font-size: 25px;
+          text-align: center; }
+          #root .container .menu .main-menuList a span {
+            display: block;
+            width: 100%; }
+          #root .container .menu .main-menuList a p {
+            margin-top: 5px;
+            width: 100%; }
+        #root .container .menu .main-menuList:hover {
+          background: #1f222a; }
+          #root .container .menu .main-menuList:hover a {
+            transition: .5s;
+            color: #fff;
+            font-size: 35px; }
+            #root .container .menu .main-menuList:hover a p {
+              margin-top: -5px; }
+    #root .container .login {
+      width: 30%;
+      padding: 2%;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 10px;
+      border: 1px solid rgba(68, 68, 68, 0.4); }
+      #root .container .login h2 {
+        margin-bottom: 20px; }
+      #root .container .login .loginForm {
+        width: 95% !important;
+        margin: auto; }
+        #root .container .login .loginForm ul {
+          border: 1px solid #cecdcd;
+          border-radius: 5px; }
+          #root .container .login .loginForm ul li {
+            padding: 10px 15px; }
+            #root .container .login .loginForm ul li label {
+              width: 10%;
+              font-size: 16px;
+              text-align: center; }
+            #root .container .login .loginForm ul li input {
+              font-size: 16px;
+              width: 90%;
+              border: 0;
+              padding-left: 1%;
+              background: transparent; }
+            #root .container .login .loginForm ul li:first-of-type {
+              border-bottom: 1px solid #cecdcd; }
+      #root .container .login .supplementary-services {
+        margin: 20px auto 0;
+        width: 100%; }
+        #root .container .login .supplementary-services a {
+          display: inline-block;
+          width: 33.3%;
+          border-left: 1px solid #cdcdcd;
+          color: rgba(68, 68, 68, 0.4);
+          letter-spacing: -1px;
+          text-align: center;
+          font-size: 14px; }
+          #root .container .login .supplementary-services a:first-of-type {
+            border: 0; }
+          #root .container .login .supplementary-services a:hover {
+            color: #000;
+            font-weight: 700; }
+    #root .container .register {
+      padding: 2% 15px;
+      width: 65%;
+      margin: 0 auto; }
+      #root .container .register h2 {
+        margin-bottom: 30px; }
+      #root .container .register-ui {
+        width: 100%;
+        margin: 0 auto;
+        border-bottom: 1px solid #cecdcd; }
+        #root .container .register-ui li {
+          border-top: 1px solid #cecdcd;
+          margin: 0;
+          height: 60px; }
+          #root .container .register-ui li:first-of-type {
+            border-top: 1px solid #cecdcd; }
+          #root .container .register-ui li.gender .gender-box {
+            width: 30%; }
+            #root .container .register-ui li.gender .gender-box label {
+              display: inline;
+              text-align: center;
+              font-size: 25px;
+              margin-right: 20px; }
+            #root .container .register-ui li.gender .gender-box input {
+              width: 15px; }
+          #root .container .register-ui li label {
+            width: 25%;
+            margin: 0;
+            padding-left: 2%;
+            display: flex;
+            align-items: center; }
+            #root .container .register-ui li label span {
+              padding-left: 6%;
+              width: 100%; }
+              #root .container .register-ui li label span::before {
+                content: "▶";
+                margin-right: 20px; }
+          #root .container .register-ui li .insert-box {
+            padding-left: 2%;
+            display: flex;
+            align-items: center;
+            width: 75%; }
+            #root .container .register-ui li .insert-box input {
+              width: 40%;
+              font-size: 16px;
+              padding-left: 1%;
+              margin: 0; }
+      #root .container .register .btnArea {
+        margin-top: 30px; }
     #root .container .myName {
       position: absolute;
       top: 50%;
@@ -164,38 +400,39 @@ textarea {
         z-index: -1; }
     #root .container .myPage {
       width: 50%;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%); }
-      #root .container .myPage div {
+      margin: 20px auto;
+      border: 1px solid rgba(68, 68, 68, 0.4);
+      border-radius: 5px;
+      overflow: hidden; }
+      #root .container .myPage li {
+        border-top: 1px solid rgba(68, 68, 68, 0.4);
         display: flex; }
-        #root .container .myPage div p {
+        #root .container .myPage li p {
           font-size: 18px;
-          padding: 10px 0 10px 10px;
+          padding: 20px;
+          padding-right: 0;
           color: #000; }
-          #root .container .myPage div p:first-of-type {
+          #root .container .myPage li p:first-of-type {
             width: 35%;
             font-weight: 700; }
-          #root .container .myPage div p:last-of-type {
-            width: 65%; }
+          #root .container .myPage li p:last-of-type {
+            width: 65%;
+            border-left: 1px solid rgba(68, 68, 68, 0.4); }
+        #root .container .myPage li:first-of-type {
+          border: 0; }
     #root .container .board {
-      margin-top: 7vh;
       width: 100%; }
       #root .container .board-Mini {
-        width: 60%;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%); }
+        width: 99%; }
       #root .container .board-type-normal {
-        padding: 5px 5% 0; }
+        padding: 5px 0 0; }
         #root .container .board-type-normal table {
           width: 100%;
           border-collapse: collapse;
           overflow: hidden; }
           #root .container .board-type-normal table tbody tr th {
             padding-bottom: 5px;
-            border-bottom: 1px solid rgba(190, 131, 131, 0.5);
+            border-bottom: 1px solid #8e9fff;
             text-align: center; }
             #root .container .board-type-normal table tbody tr th:first-of-type {
               width: 10%; }
@@ -208,15 +445,17 @@ textarea {
             #root .container .board-type-normal table tbody tr th:nth-of-type(5) {
               width: 20%; }
           #root .container .board-type-normal table tbody tr th {
-            background: rgba(190, 131, 131, 0.5); }
+            background: #8e9fff; }
           #root .container .board-type-normal table tbody tr td {
             padding: 2px;
             border-bottom: 1px solid rgba(87, 79, 79, 0.5);
             text-align: center; }
-            #root .container .board-type-normal table tbody tr td:nth-of-type(2), #root .container .board-type-normal table tbody tr td:nth-of-type(5) {
+            #root .container .board-type-normal table tbody tr td:nth-of-type(2) {
               text-align: left; }
             #root .container .board-type-normal table tbody tr td:nth-of-type(2) {
               padding-left: 3%; }
+            #root .container .board-type-normal table tbody tr td a {
+              display: block; }
       #root .container .board-type-gallery table tbody {
         display: flex;
         flex-wrap: wrap;
@@ -243,12 +482,13 @@ textarea {
                 height: 100%; }
             #root .container .board-type-gallery table tbody tr td.subject a {
               font-size: 23px;
-              color: rgba(190, 131, 131, 0.5); }
+              color: #8e9fff; }
             #root .container .board-type-gallery table tbody tr td.user {
               font-size: 13px;
               text-align: right; }
             #root .container .board-type-gallery table tbody tr td.time {
               font-size: 13px;
+              letter-spacing: 1px;
               text-align: right; }
       #root .container .board-nav {
         display: flex;
@@ -262,7 +502,8 @@ textarea {
       #root .container .board-ui {
         width: 100%; }
         #root .container .board-ui form {
-          width: 50%;
+          width: 60%;
+          margin: 20px auto;
           box-shadow: 0px 0px 5px #888;
           border-radius: 5px; }
           #root .container .board-ui form h2 {
@@ -303,8 +544,8 @@ textarea {
             padding: 0 20px 20px 0; }
       #root .container .board-content {
         width: 100%;
-        margin: auto;
-        border-top: 3px solid rgba(190, 131, 131, 0.5); }
+        margin: 10px auto 0;
+        border-top: 3px solid #8e9fff; }
         #root .container .board-content .subjectLine {
           justify-content: space-between;
           align-items: center;
@@ -348,24 +589,33 @@ textarea {
         #root .container .board .btnArea .reply-button-x {
           width: 80px; }
       #root .container .board .reply {
-        margin-top: 30px;
-        border-top: 3px solid rgba(190, 131, 131, 0.5); }
+        margin: 30px 0 50px;
+        border-top: 3px solid #8e9fff;
+        background: #fafafa; }
         #root .container .board .reply-insert {
           margin: 20px 0;
+          padding-bottom: 10px;
+          padding-right: 2%;
           display: flex;
           flex-wrap: wrap;
-          justify-content: flex-end; }
+          justify-content: flex-end;
+          border-bottom: 3px solid #8e9fff; }
+          #root .container .board .reply-insert p {
+            display: flex;
+            align-items: center;
+            padding-left: 3%;
+            font-size: 18px;
+            width: 13%; }
           #root .container .board .reply-insert textarea {
-            height: 70px;
-            width: 100%;
+            height: 100px;
+            width: 87%;
             border: 1px solid #b3b1b1;
-            margin-bottom: 5px;
-            border-radius: 5px; }
+            margin-bottom: 5px; }
           #root .container .board .reply-insert .reply-button {
             width: 80px;
             padding: 10px 0;
-            margin: 0 2px;
-            background-color: rgba(190, 131, 131, 0.5);
+            margin: 1% 2px 0;
+            background-color: #8e9fff;
             border-radius: 10px;
             font-weight: 700;
             border: 0;
@@ -396,10 +646,10 @@ textarea {
             #root .container .board .reply-list .reply-info .reply-varValue .reply-varValue-depth {
               display: none;
               position: absolute;
-              z-index: 99;
-              width: 120%;
-              top: 0;
-              left: 100%;
+              z-index: 10;
+              width: 100%;
+              top: 30%;
+              left: 0;
               background: #fff; }
               #root .container .board .reply-list .reply-info .reply-varValue .reply-varValue-depth.on {
                 display: block; }
@@ -407,17 +657,14 @@ textarea {
                 padding: 2%;
                 border: 1px solid #cecdcd;
                 text-align: center; }
-    #root .container form {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%); }
-      #root .container form ul li {
-        display: flex;
-        margin: 5px 0; }
-        #root .container form ul li label {
-          width: 40%;
-          margin-right: 10px; }
+                #root .container .board .reply-list .reply-info .reply-varValue .reply-varValue-depth li:first-of-type {
+                  border-bottom: 0; }
+    #root .container form ul li {
+      display: flex;
+      margin: 5px 0; }
+      #root .container form ul li label {
+        width: 40%;
+        margin-right: 10px; }
 
 .description {
   background: #fff;
@@ -437,11 +684,13 @@ textarea {
   margin-top: 10px;
   display: flex;
   justify-content: flex-end; }
-  .btnArea .button {
+  .btnArea .button,
+  .btnArea input[type="submit"],
+  .btnArea input[type="reset"] {
     width: 75px;
     padding: 8px 0;
     margin: 0 4px;
-    background-color: rgba(190, 131, 131, 0.5);
+    background-color: #8e9fff;
     border-radius: 7px;
     font-weight: 700;
     border: 0;

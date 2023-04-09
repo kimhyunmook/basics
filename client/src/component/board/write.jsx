@@ -1,7 +1,7 @@
 import { useState,useLayoutEffect } from "react";
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom";
-import { writeBoard, listBoard } from "../../actions/board_action";
+import { writeBoard } from "../../actions/board_action";
 import { auth } from "../../actions/user_action";
 import Container from "../common/container";
 import { getDate } from "../../actions/tool_action";
@@ -54,6 +54,7 @@ function WriteBoard() {
             subject:subject,
             content:textArea,
             w_time:getDate(),
+            d_time:getDate('display'),
             user_id:userInfo.id,
             board_type:'normal'
         },{name:path[2]})

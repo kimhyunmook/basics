@@ -4,80 +4,69 @@ import List from './list'
 import LoginList from "./loginList";
 import configJson from '../../json/site_config.json'
 import { loginToken } from "../../actions/type";
-import { faFileExcel, faHouse, faKeyboard } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { menuConfig } from "../../json/config";
 
 
-function Header() {
-    let i;
+function Header(props) {
     const cookie = document.cookie;
     const loginCookieName = loginToken;
-    const [userInfo,setUserInfo] = useState({
-        id:''
+    const [userInfo, setUserInfo] = useState({
+        id: ''
     });
     const [isAuth, setIsAuth] = useState(false)
 
     let x_token = '';
-    if(cookie !== '') {
+    if (cookie !== '') {
         x_token = cookie.split(`${loginCookieName}=`);
     }
     x_token = x_token[1];
 
-    const menu = configJson.header;
+    const menu = menuConfig(false)
     let menuList = [];
-    /** FontawesomeIcon 사용시 여기 추가 */
-    let iconList = [
-        faHouse,
-        faKeyboard,
-        faFileExcel
-    ]
-    menu.map((el,index) => {
-        let resultText;
-        if(el.icon === "" || el.icon === undefined || el.icon === false) {
-            resultText = el.name;
-        } else {
-            resultText = <FontAwesomeIcon icon={iconList[el.icon]} />;
-        }
 
-        if(!el.depth) {
+    menu.map((el, index) => {
+        let info;
+        if (!el.depth) {
+            info = {
+                key: index,
+                text: el.fontAwesome,
+                href: el.href,
+                description: el.description,
+                auth:el.auth
+            }
             menuList.push(
-                <List 
-                    key={index} 
-                    text={ resultText } 
-                    href={ el.href } 
-                    description={ el.description } 
-                    auth = { el.auth }
-                />
+                <List {...info} />
             )
         } else {
+            info = {
+                key: index,
+                text: el.fontAwesome,
+                href: el.href,
+                class_name:el.menu_type,
+                depth:true,
+                depth_content:<BoardList/>,
+                auth:el.auth
+            }
             menuList.push(
-                <List 
-                    key={ index } 
-                    text={ resultText } 
-                    herf={ el.href }
-                    description={ el.description }
-                    class_name={ el.menu_tpye } 
-                    depth={ true } 
-                    depth_content={ <BoardList/> }
-                    auth={ el.auth }
-                />
+                <List {...info} />
             )
         }
     });
 
     function BoardList() {
         let boardList = configJson.board.target;
-        return(
+        return (
             <ul>
                 {
-                    boardList.map((el, index)=>{
-                        return(
-                            <List 
-                                key={ index } 
-                                text={ el.name } 
-                                href={ el.href } 
-                                auth={ el.auth }
-                            />
+                    boardList.map((el, index) => {
+                        let info= {
+                            key: index,
+                            text: el.name,
+                            href: el.href,
+                            auth: el.auth
+                        }
+                        return (
+                            <List {...info} />
                         )
                     })
                 }
@@ -85,56 +74,58 @@ function Header() {
         )
     }
 
-    useLayoutEffect(()=>{
-        if(x_token !== undefined) {
+
+
+    useLayoutEffect(() => {
+        if (x_token !== undefined) {
             auth({
                 id: x_token,
                 login_token: cookie
             }).payload
-            .then(user => {
-                setUserInfo(user)
-                setIsAuth(user.isAuth)
-            })
+                .then(user => {
+                    setUserInfo(user)
+                    setIsAuth(user.isAuth)
+                })
         }
-
 
         const description = document.querySelectorAll('.description');
-        for(let i=0; i<description.length;i++) {
+        for (let i = 0; i < description.length; i++) {
             const target = description[i].parentNode;
-            target.addEventListener('mouseover',()=>{
-                description[i].style='display:block';
+            target.addEventListener('mouseover', () => {
+                description[i].style = 'display:block';
             })
-            target.addEventListener('mouseout',()=>{
-                description[i].style='display:none';
+            target.addEventListener('mouseout', () => {
+                description[i].style = 'display:none';
             })
         }
-    },[]);
-    if(isAuth) {}
-    console.log('isAuth',isAuth);
+    }, []);
+    if (isAuth) { }
+
 
     return (
-        <header>
-            <nav className="top-nav">
-                <LoginList loginCookieName={ loginCookieName } token={ x_token } userInfo={ userInfo } />
-            </nav>
+        <header id="header" >
+            <div className="logo">
+                <a href="/">
+                    ❓
+                </a>
+            </div>
 
-            <nav className="left-nav">
-                <div className="menu">
-                    <div className="menu-icon"></div>
-                    <ul className="menu-depth1">
-                        <li>
-                        </li>
-                    </ul>
-                </div>
+            <nav className="menu-nav">
                 <ul className="main-menu">
                     {
                         menuList.map((el) => {
-                            return(el)
+                            return (el)
                         })
                     }
                 </ul>
             </nav>
-            
+            <nav className="top-nav">
+                <LoginList
+                    loginCookieName={loginCookieName}
+                    token={x_token}
+                    userInfo={userInfo}
+                />
+            </nav>
             <nav className="right-nav">
 
             </nav>

@@ -1,1 +1,4 @@
 node_modules
+db.js
+port.js
+.env

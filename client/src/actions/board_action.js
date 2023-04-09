@@ -68,7 +68,7 @@ export function deleteContent(dataSubmit, config) {
 }
     
 export function replyAction(dataSubmit, config) {
-    const request = axios.post(`/api/board/${config.name}/reply/${config.w_num}`, dataSubmit)
+    const request = axios.post(`/api/board/${dataSubmit.name}/reply/${dataSubmit.w_num}`, dataSubmit)
         .then(request => request.data)
     return {
         type: 'reply',

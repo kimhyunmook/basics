@@ -28,7 +28,7 @@ export function auth(dataSubmit) {
 }
 
 export function edit(dataSubmit) {
-    const request = axios.post('/api/users/edit', dataSubmit)
+    const request = axios.put('/api/users/edit', dataSubmit)
         .then(response => response.data)
     return {
         type: 'user_edit',
@@ -37,7 +37,7 @@ export function edit(dataSubmit) {
 }
 
 export function deleteUser(dataSubmit) {
-    const request = axios.post('/api/users/delete', dataSubmit)
+    const request = axios.delete('/api/users/delete', dataSubmit)
         .then(response => response.data)
     return {
         type: 'user_delete',

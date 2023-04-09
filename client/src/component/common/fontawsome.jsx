@@ -1,5 +1,5 @@
 import React from "react";
-import { faAngleLeft, faAngleRight, faBars, faHamburger, faHouse, faList, faPen, faPenNib, faTrash, faUserXmark, faWrench, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faAngleLeft, faAngleRight, faBars, faHamburger, faHouse, faList, faPen, faPenNib, faPerson, faPersonDress, faTrash, faUnlockKeyhole, faUser, faUserXmark, faWrench, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function HouseIcon () {
@@ -65,5 +65,29 @@ export function PenIcon () {
 export function MenuIcon () {
     return(
         <FontAwesomeIcon icon={faBars} />
+    )
+}
+
+export function Man () {
+    return(
+        <FontAwesomeIcon icon={faPerson} />
+    )
+}
+
+export function Girl () {
+    return(
+        <FontAwesomeIcon icon={faPersonDress} />
+    )
+}
+
+export function User () {
+    return(
+        <FontAwesomeIcon icon={faUser} />
+    )
+}
+
+export function Unlock () {
+    return(
+        <FontAwesomeIcon icon={faUnlockKeyhole} />
     )
 }

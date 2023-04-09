@@ -19,7 +19,11 @@ let auth = (req, res, next) => {
             isAuth: false,
             error: true
         });
+        else {
+            rows[0]. isAuth = true;
+        }
         req.user = rows[0]
+        delete req.user.password;      
         next();
     })
 }

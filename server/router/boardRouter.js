@@ -100,15 +100,22 @@ router.post('/:name/write', (req, res) => {
     db.query(sql2,[],(err2, rows2)=> {
         if (err2) throw err;
         let sql = `
-                INSERT INTO ${req.params.name} (w_num, w_parent, subject, content, w_time, user_id, board_type) 
-                VALUE (?,?,?,?,?,?,?)
+                INSERT INTO ${req.params.name} 
+                (w_num, w_parent, subject, content, w_time, d_time, user_id, board_type) 
+                VALUE 
+                (?,?,?,?,?,?,?,?)
             `;
+        let num ;
+        if(rows2[0] === undefined) num = 0
+        else num = rows2[0].w_num
+
         param = [
-            rows2[0].w_num+1,
-            rows2[0].w_num+1,
+            num + 1,
+            num + 1,
             req.body.subject,
             req.body.content,
             req.body.w_time,
+            req.body.d_time,
             req.body.user_id,
             req.body.board_type
         ]
@@ -126,14 +133,14 @@ router.post('/:name/write', (req, res) => {
   
 })
 
-
 router.post('/list/:name/contents/:w_num', (req, res) => {
-    const w_num = req.body.w_num
+    const w_num = req.body.w_num;
     let sql = `
         SELECT *
         FROM ${ req.body.name }
         WHERE w_num=?
     `;
+
     db.query(sql, [w_num], (err, rows) => {
         if (err) throw err;
         res.send(rows[0])
@@ -199,9 +206,9 @@ router.delete('/list/:name/delete/:w_num', (req, res) => {
 router.post('/:name/reply/:w_num', (req, res)=>{
     let sql = `
         INSERT INTO ${req.params.name} 
-        (w_num, w_parent, subject, content, w_comment, w_time, user_id, board_type) 
+        (w_num, w_parent, subject, content, w_comment, w_time, d_time, user_id, board_type) 
         VALUE 
-        (?,?,?,?,?,?,?,?);
+        (?,?,?,?,?,?,?,?,?);
     `;
 
     let param = [
@@ -211,6 +218,7 @@ router.post('/:name/reply/:w_num', (req, res)=>{
         req.body.content,
         req.body.w_comment + 1,
         req.body.w_time,
+        req.body.d_time,
         req.body.user_id,
         req.body.board_type
     ]
