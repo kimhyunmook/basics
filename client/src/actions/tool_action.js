@@ -1,3 +1,5 @@
+// import { basicSetting } from "./adm_action";
+const {basicSetting} = require('./adm_action');
 
 const deleteCookie = (name) => {
     window.location.href = '/'
@@ -29,12 +31,14 @@ function getDate (type) {
     return display;
 }
 
-function displayDate (time) {
-
-}
-
 function MemberConfirm (auth) {
     console.log(auth);
+}
+
+function menuSetting () {
+    return basicSetting({url:'menu'}).payload.then(res => {
+        return res.menu
+    });
 }
 
 
@@ -42,6 +46,6 @@ function MemberConfirm (auth) {
 module.exports= {
     deleteCookie,
     getDate,
-    displayDate,
-    MemberConfirm
+    MemberConfirm,
+    menuSetting
 }

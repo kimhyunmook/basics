@@ -16,7 +16,7 @@ router.get('/list/:type/:name/:page', (req, res) => {
     const page = req.params.page
     let sql = `
         SELECT * 
-        FROM ${req.params.name}
+        FROM board_${req.params.name}
         WHERE w_comment=0 ORDER BY w_num DESC
     `;
 
@@ -60,50 +60,50 @@ router.get('/list/:type/:name/:page', (req, res) => {
     })
 })
 
-router.post('/:name/galleryWrite', upload('client/public/uploads/','file'), (req, res) => {
-    let sql = '';
-    let param = [];
-    sql = `
-            INSERT INTO ${req.params.name} (subject, content, time, img, id, board_type) 
-            VALUE (?,?,?,?,?,?)
-        `;
+// router.post('/:name/galleryWrite', upload('client/public/uploads/','file'), (req, res) => {
+//     let sql = '';
+//     let param = [];
+//     sql = `
+//             INSERT INTO ${req.params.name} (subject, content, time, img, id, board_type) 
+//             VALUE (?,?,?,?,?,?)
+//         `;
 
-    let file
-    if (req.file !== undefined) {
-        file = req.file.path.split('\\');
-        file = file[file.length - 1];
-    }
-    param = [
-        req.body.subject,
-        req.body.content,
-        req.body.time,
-        file,
-        req.body.id,
-        req.body.board_type
-    ];
-    db.query(sql, param, (err, rows) => {
-        if (err) throw err;
-        res.status(200).json({
-            create: true,
-            board_type: 'gallery'
-        })
-    })
-})
+//     let file
+//     if (req.file !== undefined) {
+//         file = req.file.path.split('\\');
+//         file = file[file.length - 1];
+//     }
+//     param = [
+//         req.body.subject,
+//         req.body.content,
+//         req.body.time,
+//         file,
+//         req.body.id,
+//         req.body.board_type
+//     ];
+//     db.query(sql, param, (err, rows) => {
+//         if (err) throw err;
+//         res.status(200).json({
+//             create: true,
+//             board_type: 'gallery'
+//         })
+//     })
+// })
 
 router.post('/:name/write', (req, res) => {
     let param = [];
     
     let sql2 = `
-       SELECT * FROM ${req.params.name} WHERE w_comment=0 ORDER BY w_num DESC LIMIT 1
+       SELECT * FROM board_${req.params.name} WHERE w_comment=0 ORDER BY w_num DESC LIMIT 1
     `
 
     db.query(sql2,[],(err2, rows2)=> {
         if (err2) throw err;
         let sql = `
-                INSERT INTO ${req.params.name} 
-                (w_num, w_parent, subject, content, w_time, d_time, user_id, board_type) 
+                INSERT INTO board_${req.params.name} 
+                (w_num, w_parent, subject, content, w_time, d_time, user_id,board_type) 
                 VALUE 
-                (?,?,?,?,?,?,?,?)
+                (?,?,?,?,?,?,?,"board")
             `;
         let num ;
         if(rows2[0] === undefined) num = 0
@@ -137,7 +137,7 @@ router.post('/list/:name/contents/:w_num', (req, res) => {
     const w_num = req.body.w_num;
     let sql = `
         SELECT *
-        FROM ${ req.body.name }
+        FROM board_${ req.body.name }
         WHERE w_num=?
     `;
 
@@ -150,11 +150,11 @@ router.post('/list/:name/contents/:w_num', (req, res) => {
 router.post('/list/:name/varValue/:w_num', (req, res) => {
     let hit = req.body.hit;
     let sql = `
-        UPDATE ${req.body.name}
+        UPDATE board_${req.body.name}
         SET hit=?
         WHERE w_num=${req.body.w_num} AND w_comment=0; 
     `;
-    console.log(hit);
+    
     db.query(sql, [hit], (err, rows) => {
         if (err) throw err;
         res.status(200).json({hit:hit})
@@ -182,18 +182,18 @@ router.post('/list/:name/modify/:w_num', (req, res) => {
 
 router.delete('/list/:name/delete/:w_num', (req, res) => {
     let sql = `
-        DELETE FROM ${req.params.name}
+        DELETE FROM board_${req.params.name}
         WHERE w_num=${req.params.w_num}
     `
     db.query(sql, [], (err) => {
         if (err) throw err;
-        let sql2 = `ALTER TABLE ${req.params.name} AUTO_INCREMENT=1;`;
+        let sql2 = `ALTER TABLE board_${req.params.name} AUTO_INCREMENT=1;`;
         db.query(sql2,[],(err1)=>{
             if (err1) throw err1;
             let sql3= `SET @COUNT = 0;`
             db.query(sql3,[],(err2)=>{
                 if (err2) throw err2;
-                let sql4= `UPDATE ${req.params.name} SET w_id=@COUNT:=@COUNT+1;`
+                let sql4= `UPDATE board_${req.params.name} SET w_id=@COUNT:=@COUNT+1;`
                 db.query(sql4, [],(err3)=>{
                     if (err3) throw err3;
                 });
@@ -205,7 +205,7 @@ router.delete('/list/:name/delete/:w_num', (req, res) => {
 
 router.post('/:name/reply/:w_num', (req, res)=>{
     let sql = `
-        INSERT INTO ${req.params.name} 
+        INSERT INTO board_${req.params.name} 
         (w_num, w_parent, subject, content, w_comment, w_time, d_time, user_id, board_type) 
         VALUE 
         (?,?,?,?,?,?,?,?,?);
@@ -233,7 +233,7 @@ router.post('/:name/reply/:w_num', (req, res)=>{
 
 router.post('/list/:name/reply/:w_num',(req, res) => {
     let sql = `
-        SELECT * FROM ${req.params.name}
+        SELECT * FROM board_${req.params.name}
         WHERE w_num = ? AND w_comment != 0;
     `;
     let param = [
@@ -250,7 +250,7 @@ router.post('/list/:name/reply/:w_num',(req, res) => {
 
 router.delete('/list/:name/replyDelete/:w_id',(req, res) => {
     let sql =`
-        DELETE FROM ${req.params.name}
+        DELETE FROM board_${req.params.name}
         WHERE w_id=${req.params.w_id}
     `;
 

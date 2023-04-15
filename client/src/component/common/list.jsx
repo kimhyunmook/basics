@@ -8,11 +8,8 @@ import { MemberConfirm } from "../../actions/tool_action";
 function List({ text, href, class_name, depth, depth_content, description, auth }) {
     let targetHref;
 
-    if (href === undefined) {
-        targetHref = '#';
-    } else {
-        targetHref = href;
-    }
+    if (href === undefined) targetHref = '#';
+    else targetHref = href;
 
     const [dis, setDis] = useState('disNo');
     const disYes = (event) => {

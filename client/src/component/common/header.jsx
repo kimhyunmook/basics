@@ -2,9 +2,10 @@ import { useState, useLayoutEffect } from "react";
 import { auth } from "../../actions/user_action";
 import List from './list'
 import LoginList from "./loginList";
-import configJson from '../../json/site_config.json'
 import { loginToken } from "../../actions/type";
-import { menuConfig } from "../../json/config";
+import { menuSetting } from "../../actions/tool_action";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwsome } from "./fontawsome";
 
 
 function Header(props) {
@@ -13,69 +14,14 @@ function Header(props) {
     const [userInfo, setUserInfo] = useState({
         id: ''
     });
-    const [isAuth, setIsAuth] = useState(false)
+    const [isAuth, setIsAuth] = useState(false);
+    const path = window.location.pathname.split('/');
 
     let x_token = '';
-    if (cookie !== '') {
-        x_token = cookie.split(`${loginCookieName}=`);
-    }
+    if (cookie !== '') x_token = cookie.split(`${loginCookieName}=`);
     x_token = x_token[1];
 
-    const menu = menuConfig(false)
-    let menuList = [];
-
-    menu.map((el, index) => {
-        let info;
-        if (!el.depth) {
-            info = {
-                key: index,
-                text: el.fontAwesome,
-                href: el.href,
-                description: el.description,
-                auth:el.auth
-            }
-            menuList.push(
-                <List {...info} />
-            )
-        } else {
-            info = {
-                key: index,
-                text: el.fontAwesome,
-                href: el.href,
-                class_name:el.menu_type,
-                depth:true,
-                depth_content:<BoardList/>,
-                auth:el.auth
-            }
-            menuList.push(
-                <List {...info} />
-            )
-        }
-    });
-
-    function BoardList() {
-        let boardList = configJson.board.target;
-        return (
-            <ul>
-                {
-                    boardList.map((el, index) => {
-                        let info= {
-                            key: index,
-                            text: el.name,
-                            href: el.href,
-                            auth: el.auth
-                        }
-                        return (
-                            <List {...info} />
-                        )
-                    })
-                }
-            </ul>
-        )
-    }
-
-
-
+    const [menu, setMenu] = useState([]);
     useLayoutEffect(() => {
         if (x_token !== undefined) {
             auth({
@@ -87,6 +33,13 @@ function Header(props) {
                     setIsAuth(user.isAuth)
                 })
         }
+
+        if(path[1].split('?')[0] !== 'download')
+        setTimeout(() => {
+            menuSetting().then((res) => {
+                setMenu(res);
+            })
+        }, 100)
 
         const description = document.querySelectorAll('.description');
         for (let i = 0; i < description.length; i++) {
@@ -101,7 +54,6 @@ function Header(props) {
     }, []);
     if (isAuth) { }
 
-
     return (
         <header id="header" >
             <div className="logo">
@@ -113,8 +65,17 @@ function Header(props) {
             <nav className="menu-nav">
                 <ul className="main-menu">
                     {
-                        menuList.map((el) => {
-                            return (el)
+                        menu.map((el, index) => {
+                            let info = {
+                                key: index,
+                                href: el.href,
+                                text: el.name,
+                            }
+                            if (el.description !== "") info.description = el.description;
+                            if (el.custom === "fontawsome") info.text = <FontAwsome data={el.custom_comment} />;
+                            return (
+                                <List {...info} />
+                            )
                         })
                     }
                 </ul>
@@ -125,9 +86,6 @@ function Header(props) {
                     token={x_token}
                     userInfo={userInfo}
                 />
-            </nav>
-            <nav className="right-nav">
-
             </nav>
         </header>
     )

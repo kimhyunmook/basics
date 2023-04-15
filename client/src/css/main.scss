@@ -96,10 +96,10 @@ $dark: #1f222a;
             position: relative;
 
             &.top-nav {
-                position: absolute;
+                // position: absolute;
                 left: 0;
                 top: 0;
-                width: 100vw;
+                width: 30vw;
                 height: $topNav;
                 z-index: 2;
 
@@ -173,6 +173,7 @@ $dark: #1f222a;
                 ul {
                     position: absolute;
                     top: 50%;
+                    width:100%;
                     height: 100%;
                     left: 0;
                     transform: translateY(-50%);
@@ -465,11 +466,11 @@ $dark: #1f222a;
         .login {
             $b: 1px solid #cecdcd;
 
-            width: 30%;
+            width: 27.5%;
             padding: 2%;
             position: absolute;
             left: 50%;
-            top: 50%;
+            top: 40%;
             transform: translate(-50%, -50%);
             border-radius: 10px;
             border: 1px solid rgba(68, 68, 68, 0.4);
@@ -712,7 +713,7 @@ $dark: #1f222a;
 
 
             &-type {
-                &-normal {
+                &-board {
                     padding: 5px 0 0;
 
                     table {

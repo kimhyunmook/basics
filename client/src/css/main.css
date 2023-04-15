@@ -57,10 +57,9 @@ textarea {
       width: 100%;
       position: relative; }
       #root header nav.top-nav {
-        position: absolute;
         left: 0;
         top: 0;
-        width: 100vw;
+        width: 30vw;
         height: 65px;
         z-index: 2; }
         #root header nav.top-nav ul {
@@ -106,6 +105,7 @@ textarea {
         #root header nav.menu-nav ul {
           position: absolute;
           top: 50%;
+          width: 100%;
           height: 100%;
           left: 0;
           transform: translateY(-50%);
@@ -290,11 +290,11 @@ textarea {
             #root .container .menu .main-menuList:hover a p {
               margin-top: -5px; }
     #root .container .login {
-      width: 30%;
+      width: 27.5%;
       padding: 2%;
       position: absolute;
       left: 50%;
-      top: 50%;
+      top: 40%;
       transform: translate(-50%, -50%);
       border-radius: 10px;
       border: 1px solid rgba(68, 68, 68, 0.4); }
@@ -424,37 +424,37 @@ textarea {
       width: 100%; }
       #root .container .board-Mini {
         width: 99%; }
-      #root .container .board-type-normal {
+      #root .container .board-type-board {
         padding: 5px 0 0; }
-        #root .container .board-type-normal table {
+        #root .container .board-type-board table {
           width: 100%;
           border-collapse: collapse;
           overflow: hidden; }
-          #root .container .board-type-normal table tbody tr th {
+          #root .container .board-type-board table tbody tr th {
             padding-bottom: 5px;
             border-bottom: 1px solid #8e9fff;
             text-align: center; }
-            #root .container .board-type-normal table tbody tr th:first-of-type {
+            #root .container .board-type-board table tbody tr th:first-of-type {
               width: 10%; }
-            #root .container .board-type-normal table tbody tr th:nth-of-type(2) {
+            #root .container .board-type-board table tbody tr th:nth-of-type(2) {
               width: 53%; }
-            #root .container .board-type-normal table tbody tr th:nth-of-type(3) {
+            #root .container .board-type-board table tbody tr th:nth-of-type(3) {
               width: 17%; }
-            #root .container .board-type-normal table tbody tr th:nth-of-type(4) {
+            #root .container .board-type-board table tbody tr th:nth-of-type(4) {
               width: 10%; }
-            #root .container .board-type-normal table tbody tr th:nth-of-type(5) {
+            #root .container .board-type-board table tbody tr th:nth-of-type(5) {
               width: 20%; }
-          #root .container .board-type-normal table tbody tr th {
+          #root .container .board-type-board table tbody tr th {
             background: #8e9fff; }
-          #root .container .board-type-normal table tbody tr td {
+          #root .container .board-type-board table tbody tr td {
             padding: 2px;
             border-bottom: 1px solid rgba(87, 79, 79, 0.5);
             text-align: center; }
-            #root .container .board-type-normal table tbody tr td:nth-of-type(2) {
+            #root .container .board-type-board table tbody tr td:nth-of-type(2) {
               text-align: left; }
-            #root .container .board-type-normal table tbody tr td:nth-of-type(2) {
+            #root .container .board-type-board table tbody tr td:nth-of-type(2) {
               padding-left: 3%; }
-            #root .container .board-type-normal table tbody tr td a {
+            #root .container .board-type-board table tbody tr td a {
               display: block; }
       #root .container .board-type-gallery table tbody {
         display: flex;

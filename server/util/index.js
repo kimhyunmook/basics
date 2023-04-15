@@ -1,4 +1,5 @@
 const fs = require('fs');
+const bcrypt = require('bcrypt');
 
 function readSQL(fileName, config) {
     let file = fs.readFileSync(`server/mysql/sql/${fileName}`, {
@@ -11,6 +12,8 @@ function readSQL(fileName, config) {
     }
     return file
 }
+
+
 
 module.exports = {
     readSQL

@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { listBoard } from '../../actions/board_action';
 import { auth } from '../../actions/user_action';
-import { board_target } from '../../json/config';
 import configJson from '../../json/site_config.json'
 import Container from '../common/container';
 import { LeftIcon, RightIcon, WriteIcon } from '../common/fontawsome';
@@ -21,7 +20,7 @@ function Board ({className}) {
     const moveWrite = (event) => {
         event.preventDefault();
         let url;
-        switch (board_target()) {
+        switch ('') {
             case "gallery" : url = `/board/gallery/${ path[2] }/write`;
             break;
             default : url =`/board/${ path[2] }/write`;
@@ -32,7 +31,7 @@ function Board ({className}) {
 
     useLayoutEffect(()=>{
         let type = listBoard({},{
-            type:board_target(),
+            type:'board',
             name:path[2],
             page:path[3]
         });
@@ -40,6 +39,7 @@ function Board ({className}) {
         .then(res=>{
             setList(res.payload.array);
             setPageNum(res.payload.page);
+
             if(path[3] == res.payload.page.length) 
             setNextPage(`/board/${ path[2] }/${ Number(path[3]) }`);
             else
@@ -100,7 +100,7 @@ function Board ({className}) {
         )
     }
 
-    let boardClass = `board-type-${board_target()}`
+    let boardClass = `board-type-${path[1]}`
 
     return(
         <Container>
@@ -118,23 +118,7 @@ function Board ({className}) {
                                 })
                             }
                         </tr>
-                        {   
-                            configJson.board.target.map(el=>{
-                                if(path[2] === el.name) {
-                                    if(el.type.division_type === 'gallery') {
-                                        return(
-                                            <Gallery key={el} />
-                                        )
-                                    } else {
-                                        return(
-                                            <Normal key={el} />
-                                        )
-                                    }
-                                }
-                            })
-                        }
-                        
-                        
+                        <Normal />
                     </tbody>
                 </table>
                 <div className="board-nav">

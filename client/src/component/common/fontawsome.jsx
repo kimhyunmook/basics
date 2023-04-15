@@ -1,93 +1,119 @@
 import React from "react";
-import { faAngleLeft, faAngleRight, faBars, faHamburger, faHouse, faList, faPen, faPenNib, faPerson, faPersonDress, faTrash, faUnlockKeyhole, faUser, faUserXmark, faWrench, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faAngleLeft, faAngleRight, faBars, faChalkboard, faHouse, faList, faPen, faPenNib, faPerson, faPersonDress, faTrash, faUnlockKeyhole, faUser, faUserLock, faUserXmark, faWrench, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export function HouseIcon () {
-    return(
-        <FontAwesomeIcon icon={faHouse} />
+export function FontAwsome(props) {
+    let data = props.data
+    switch (data) {
+        case data = 'fa-user':
+            data = faUser;
+            break;
+        case data = 'fa-house':
+            data = faHouse;
+            break;
+        case data = 'fa-chalkboard':
+            data = faChalkboard;
+            break;
+        case data = 'fa-unlock-keyhole':
+            data = faUnlockKeyhole;
+    }
+    return (
+        <FontAwesomeIcon icon={data} />
     )
 }
 
-export function WriteIcon () {
-    return(
+export function BoardIcon() {
+    return (
+        <FontAwesomeIcon icon={faChalkboard} />
+    )
+}
+
+export function WriteIcon() {
+    return (
         <FontAwesomeIcon icon={faPen} />
     )
-} 
+}
 
-export function Xmark () {
-    return(
+export function Xmark() {
+    return (
         <FontAwesomeIcon icon={faXmark} />
     )
 }
 
-export function ListIcon () {
+export function ListIcon() {
     return (
         <FontAwesomeIcon icon={faList} />
     )
 }
 
-export function LeftIcon () {
+export function LeftIcon() {
     return (
         <FontAwesomeIcon icon={faAngleLeft} />
     )
 }
 
-export function RightIcon () {
+export function RightIcon() {
     return (
         <FontAwesomeIcon icon={faAngleRight} />
     )
 }
 
-export function FixIcon () {
+export function FixIcon() {
     return (
         <FontAwesomeIcon icon={faWrench} />
     )
 }
 
-export function DeleteIcon () {
+export function DeleteIcon() {
     return (
         <FontAwesomeIcon icon={faTrash} />
     )
 }
 
-export function DeleteUserIcon () {
+export function DeleteUserIcon() {
     return (
         <FontAwesomeIcon icon={faUserXmark} />
     )
 }
 
-export function PenIcon () {
-    return(
+export function PenIcon() {
+    return (
         <FontAwesomeIcon icon={faPenNib} />
     )
 }
 
-export function MenuIcon () {
-    return(
+export function MenuIcon() {
+    return (
         <FontAwesomeIcon icon={faBars} />
     )
 }
 
-export function Man () {
-    return(
+export function Man() {
+    return (
         <FontAwesomeIcon icon={faPerson} />
     )
 }
 
-export function Girl () {
-    return(
+export function Girl() {
+    return (
         <FontAwesomeIcon icon={faPersonDress} />
     )
 }
 
-export function User () {
-    return(
+export function User() {
+    return (
         <FontAwesomeIcon icon={faUser} />
     )
 }
 
-export function Unlock () {
-    return(
+export function AdminIcon() {
+    return (
+        <FontAwesomeIcon icon={faUserLock} />
+    )
+}
+
+export function Unlock() {
+    return (
         <FontAwesomeIcon icon={faUnlockKeyhole} />
     )
 }

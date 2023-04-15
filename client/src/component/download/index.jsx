@@ -46,20 +46,20 @@ export default function NeedDownLoad(props) {
         })
     }, [pathTask]);
 
-    const [host, setHost] = useState('');
+    const [host, setHost] = useState('localhost');
     const onHostHandler = (event) => {
         let target = event.currentTarget
         setHost(target.value)
     }
-    const [dbUser, setDbUser] = useState('')
+    const [dbUser, setDbUser] = useState('dev01')
     const onUserHandler = (event) => {
         setDbUser(event.currentTarget.value)
     }
-    const [dbPassword, setDbPassword] = useState('')
+    const [dbPassword, setDbPassword] = useState('sodds1346!')
     const onPasswordHandler = (event) => {
         setDbPassword(event.currentTarget.value)
     }
-    const [db, setDb] = useState('')
+    const [db, setDb] = useState('dev01')
     const onDbHandler = (event) => {
         setDb(event.currentTarget.value)
     }
