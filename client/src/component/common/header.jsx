@@ -4,7 +4,6 @@ import List from './list'
 import LoginList from "./loginList";
 import { loginToken } from "../../actions/type";
 import { menuSetting } from "../../actions/tool_action";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FontAwsome } from "./fontawsome";
 
 

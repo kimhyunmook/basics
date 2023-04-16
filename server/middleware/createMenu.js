@@ -6,7 +6,7 @@ const {
 function createMenu(req, res, next) {
     // `name`,`href`,`menu_type`,`description`,`depth`,`admin`,`parent`,`custom`,`custom_comment`
     let name = req.body.name;
-    let href = '/board/' + req.body.href + '/1';
+    let href = req.body.href;
     let menu_type = req.body.menu_type;
     let description = req.body.description;
     let depth = 0;

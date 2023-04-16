@@ -5,7 +5,8 @@ const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const db = require('../db');
 const {
-    readSQL, encryption
+    readSQL,
+    encryption
 } = require('../util')
 require('dotenv').config();
 
@@ -47,14 +48,14 @@ DB=${req.body.db}`;
             //create Admin 
             bcrypt.hash(req.body.password, 10, (err, hash) => {
                 if (err) throw err;
-                
+
                 let admin = ['admin', hash, '-', '-', 'admin', '-', 1]
                 insertDB.query(readSQL('user/insert.sql'), admin, (err2) => {
                     if (err2) throw err2
-    
+
                 })
             })
-            })
+        })
 
         // create menulist
         insertDB.query(readSQL('menu/create.sql'), [], (err1) => {
@@ -65,9 +66,11 @@ DB=${req.body.db}`;
             }), [], (err2) => {
                 if (err2) throw err2;
                 sql = `
-                    INSERT INTO adm_menu (name, href, menu_type, description, depth, admin, custom, custom_comment)
-                    VALUES ("게시판", "/board/basic/1", "board", "게시판", 1, 0, "fontawsome", "fa-chalkboard"),
-                    ("관리자","/adm","adm","관리자", 0, 1, "fontawsome", "fa-unlock-keyhole")
+                    INSERT INTO adm_menu 
+                    (name, href, menu_type, description, depth, admin, custom, custom_comment)
+                    VALUES 
+                    ("관리자","/adm","adm","관리자", 0, 1, "fontawsome", "fa-unlock-keyhole"),
+                    ("게시판", "/board/basic/1", "board", "게시판", 1, 0, "fontawsome", "fa-chalkboard")
                 `
                 insertDB.query(sql, [], (err3, rows) => {
                     if (err3) throw err3;

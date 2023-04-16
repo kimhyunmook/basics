@@ -1,17 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import { adminAction } from "../../actions/adm_action";
 import { OverlapLi } from "./ui";
+import { useNavigate } from "react-router-dom";
 
 export default function ADM_Board(props) {
     let body;
-
+    const navigate = useNavigate();
     const submit = (event) => {
         event.preventDefault();
         // `name`,`href`,`menu_type`,`description`,`depth`,`admin`,`parent`,`custom`,`custom_comment`
         body = {
             url: 'createboard',
             name: board_name,
-            href: board_href,
+            href: '/board/' + board_href + '/1',
             menu_type: 'board',
             board_type: board_type,
             description: board_description,
@@ -27,7 +28,7 @@ export default function ADM_Board(props) {
             body.custom_comment = "fa-chalkboard"
         }
         adminAction(body).payload.then(res => {
-            console.log(res)
+            navigate('/adm')
         })
     }
 
@@ -37,14 +38,15 @@ export default function ADM_Board(props) {
     const [board_name, setBoard_name] = useState("");
     function board_nameHandler(event) {
         event.preventDefault();
+        console.log(event.target.value.replace(/[^A-Za-z]/ig))
         event.target.value = event.target.value.replace(/[^A-Za-z]/ig, '')
         setBoard_name(event.target.value)
     }
     const [board_href, setBoard_href] = useState("");
-    function board_hrefHandler(event) { 
-        event.preventDefault(); 
+    function board_hrefHandler(event) {
+        event.preventDefault();
         event.target.value = event.target.value.replace(/[^A-Za-z]/ig, '')
-        setBoard_href(event.target.value) 
+        setBoard_href(event.target.value)
     }
     const [board_type, setBoard_type] = useState("");
     function board_typeHandler(event) { event.preventDefault(); setBoard_type(event.target.value) }
@@ -74,10 +76,10 @@ export default function ADM_Board(props) {
                 break;
         }
     }
-    function board_customCommentHandler(event) { 
-        event.preventDefault(); 
+    function board_customCommentHandler(event) {
+        event.preventDefault();
         event.target.value = event.target.value.replace(/[^A-Za-z]/ig, '')
-        setBoard_customCommentValue(event.target.value) 
+        setBoard_customCommentValue(event.target.value)
     }
     return (
         <ul className="adm">
