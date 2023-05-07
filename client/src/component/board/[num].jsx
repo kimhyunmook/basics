@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from '../../actions/user_action'
 import { lookContent, deleteContent, replyAction, replyList, varValue, replyDelete } from '../../actions/board_action'
 import Container from '../common/container';
-import { DeleteIcon, FixIcon, ListIcon, Xmark, MenuIcon, PenIcon } from '../common/fontawsome';
+import { MenuIcon, PenIcon, FontAwsome } from '../common/fontawsome';
 import { getDate } from '../../actions/tool_action';
 import Reply from './reply';
 
@@ -148,19 +148,19 @@ function ContentBoard () {
                             </p>
                             <div className="btnArea">
                                 <button className='button' onClick={ moveList }>
-                                    <ListIcon />
+                                    <FontAwsome data={"fa-list"} />
                                 </button>
                                 {
                                     userInfo.id === boardInfo.user_id 
                                     ? <button className='button' onClick={ moveModify }>
-                                        <FixIcon />
+                                        <FontAwsome data={"fa-wrench"} />
                                     </button>
                                     : null
                                 }
                                 {
                                     userInfo.id === boardInfo.user_id 
                                     ? <button className='button' onClick={ deleteList }>
-                                        <DeleteIcon />
+                                        <FontAwsome data={"fa-trash"} />
                                     </button>
                                     : null
                                 }
@@ -180,7 +180,7 @@ function ContentBoard () {
                             댓글 작성
                         </button> :
                         <button className="reply-button-x button" onClick={replyButton}>
-                            <Xmark />
+                            <FontAwsome data={"fa-xmark"} />
                         </button>
                     }
                 </div>
@@ -195,7 +195,7 @@ function ContentBoard () {
                                 return(
                                     <li className="reply-info" key={ index }>
                                         <p className="reply-userId">
-                                            {userInfo.id === boardInfo.user_id ? <PenIcon /> : null}
+                                            {userInfo.id === boardInfo.user_id ? <FontAwsome data={"fa-pen-nib"} /> : null}
                                             <span style={{marginLeft:'5px'}}>
                                                 { el.user_id }
                                             </span>
@@ -209,7 +209,7 @@ function ContentBoard () {
                                      
                                         <a href="#" className='reply-varValue' >
                                             <p onClick={ replyVarValueEventHandler }>
-                                                <MenuIcon />
+                                                <FontAwsome data={"fa-bars"} />
                                             </p>
                                             <ul className="reply-varValue-depth">
                                                 <li className={`delete ${el.w_id}`} onClick={ replyDel }>

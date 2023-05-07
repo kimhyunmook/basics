@@ -1,87 +1,81 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { registerUser } from '../../actions/user_action';
 import Container from '../common/container';
 import { RegisterUi, Li, Gender } from './ui/userUi';
-import { Man, Girl } from '../common/fontawsome';
+import { FontAwsome } from '../common/fontawsome';
+import axios from 'axios';
 
 function Register() {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
+
     // state
-    const [_Id,setId] = useState("");
-    const [_Password,setPassword] = useState("");
-    const [_Password2,setPassword2] = useState("");
-    const [Name,setName] = useState("");
-    const [Email,setEmail] = useState("");
-    const [Phone,setPhone] = useState("");
+    const [_Id, setId] = useState("");
+    const [_Password, setPassword] = useState("");
+    const [_Password2, setPassword2] = useState("");
+    const [Name, setName] = useState("");
+    const [Email, setEmail] = useState("");
+    const [Phone, setPhone] = useState("");
+    const [gender, setGender] = useState("");
     const form = document.forms[0];
-    // function
-    const onIdChangeHandler = (event)=> {
+    // change handler
+    const onIdChangeHandler = (event) => {
         let value = event.currentTarget.value
         setId(value)
     }
-    const onPasswordChangeHandler = (event)=> {
+    const onPasswordChangeHandler = (event) => {
         let value = event.currentTarget.value
         setPassword(value)
     }
-    const onPasswordChangeHandler2 = (event)=> {
+    const onPasswordChangeHandler2 = (event) => {
         let value = event.currentTarget.value
         setPassword2(value)
     }
-    const onNameChangeHandler = (event)=> {
+    const onNameChangeHandler = (event) => {
         let value = event.currentTarget.value
         setName(value)
     }
-    const onEmailChangeHandler = (event)=> {
+    const onEmailChangeHandler = (event) => {
         let value = event.currentTarget.value
         setEmail(value)
     }
-    const onPhoneChangeHandler = (event)=> {
+    const onPhoneChangeHandler = (event) => {
         let value = event.currentTarget.value
         setPhone(value)
     }
 
     const onGenderChangehandler = (event) => {
-        let value= event.currentTarget.value;
+        let value = event.currentTarget.value;
     }
 
-    const onSubmitHandler = (event)=> {
+    const onSubmitHandler = (event) => {
         event.preventDefault();
-        
+
         if (_Password !== _Password2) {
-            alert ('비밀번호가 다릅니다.')
+            alert('비밀번호가 다릅니다.')
             return
         }
 
+        // 순성 중요
         let body = {
-            id:_Id,
-            password:_Password,
-            name:Name,
-            email:Email,
-            gender:form.gender.value,
-            phone:Phone
+            id: _Id,
+            password: _Password,
+            name: Name,
+            email: Email,
+            phone: Phone,
+            gender: form.gender.value,
         }
 
-        dispatch(registerUser(body))
-        .then(response=>{
-            const payload = response.payload;
-            if (payload.signUp) {
-                alert('회원가입을 축하드립니다.')
-                navigate('/')
-            } else {
-                alert('아이디 중복')
-                form.id.focus();
-            }            
-        })
+        axios.post('/api/users/signup', body)
+            .then(res => {
+                if (res.data.signUp) navigate('/')
+            })
     }
 
-    return(
+    return (
         <Container>
             <RegisterUi name="회원가입" submit={onSubmitHandler} submitBtn="회원가입">
                 <Li name="id">
-                    <input required type="text" value={_Id} name="id" placeholder="ID" onChange={onIdChangeHandler}/>
+                    <input required type="text" value={_Id} name="id" placeholder="ID" onChange={onIdChangeHandler} />
                 </Li>
                 <Li name="password">
                     <input required type="password" value={_Password} name="password" placeholder='Password' onChange={onPasswordChangeHandler} />
@@ -97,10 +91,10 @@ function Register() {
                 </Li>
                 <Li name="gender">
                     <Gender checked value="남자" gender="man" change={onGenderChangehandler}>
-                        <Man />
+                        <FontAwsome data={"fa-person"} />
                     </Gender>
                     <Gender value="여자" gender="girl" change={onGenderChangehandler}>
-                        <Girl />
+                        <FontAwsome data={"fa-person-dress"} />
                     </Gender>
                 </Li>
                 <Li name="E-mail">
@@ -113,14 +107,14 @@ function Register() {
 
 const Cover = (props) => {
     return (
-        <li className={ props.name }>
+        <li className={props.name}>
             <label>
                 <span>
-                    { props.name } 
-                </span> 
+                    {props.name}
+                </span>
             </label>
             <div className='insert-box'>
-                { props.children }
+                {props.children}
             </div>
         </li>
     )

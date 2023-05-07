@@ -5,7 +5,7 @@ import { listBoard } from '../../actions/board_action';
 import { auth } from '../../actions/user_action';
 import configJson from '../../json/site_config.json'
 import Container from '../common/container';
-import { LeftIcon, RightIcon, WriteIcon } from '../common/fontawsome';
+import { FontAwsome } from '../common/fontawsome';
 
 function Board ({className}) {
     const dispatch = useDispatch();
@@ -125,7 +125,7 @@ function Board ({className}) {
                     {
                         path[path.length-1] !== "1" ? 
                         <Link className="left" to={ previousPage }>
-                            <LeftIcon />
+                            <FontAwsome data={"fa-angle-left"} />
                         </Link> : null
                     }
                     
@@ -148,7 +148,7 @@ function Board ({className}) {
                     {
                         path[path.length-1] !== String(pageNum.length) ?
                         <Link className="right" to={ nextPage }>
-                            <RightIcon />
+                            <FontAwsome data={"fa-angle-right"} />
                         </Link>
                         : null
                     }
@@ -157,7 +157,7 @@ function Board ({className}) {
                     {
                         userInfo.isAuth === true 
                         ? <button className='button' onClick={ moveWrite }>
-                            <WriteIcon />
+                            <FontAwsome data={"fa-pen"} />
                         </button>
                         : null
                     }

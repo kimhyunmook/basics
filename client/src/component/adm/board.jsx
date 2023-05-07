@@ -1,106 +1,192 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { adminAction } from "../../actions/adm_action";
-import { OverlapLi } from "./ui";
-import { useNavigate } from "react-router-dom";
+import { Overlap } from "./ui";
+import { FontAwsome } from "../common/fontawsome";
 
 export default function ADM_Board(props) {
     let body;
-    const navigate = useNavigate();
     const submit = (event) => {
         event.preventDefault();
         // `name`,`href`,`menu_type`,`description`,`depth`,`admin`,`parent`,`custom`,`custom_comment`
         body = {
             url: 'createboard',
-            name: board_name,
-            href: '/board/' + board_href + '/1',
+            name: name,
+            table_name: 'board_'+href,
+            href: '/board/' + href,
             menu_type: 'board',
             board_type: board_type,
-            description: board_description,
-            custom: board_custom,
-            custom_comment: board_customCommentValue,
+            description: description,
+            custom: custom,
+            custom_comment: customCommentValue,
+            defaultCustomComment: 'fa-chalkboard'
             // depth:0,
             // admin:0,
         }
-        if (board_description === "" || board_customComment === undefined) {
-            body.description = board_name
+        if (description === "" || description === undefined) {
+            body.description = name
         }
-        if (board_description === "" || board_customComment === undefined) {
+        if (customCommentValue === "" || customCommentValue === undefined) {
             body.custom_comment = "fa-chalkboard"
         }
         adminAction(body).payload.then(res => {
-            navigate('/adm')
+            if (res !== 'table overlap')
+                window.location.reload();
+            else console.error(res)
         })
     }
 
-    useEffect(() => {
-    }, []);
+    // 이름
+    const [name, setname] = useState("");
+    function nameHandler(event) {
+        event.preventDefault();
+        setname(event.target.value)
+    }
 
-    const [board_name, setBoard_name] = useState("");
-    function board_nameHandler(event) {
-        event.preventDefault();
-        console.log(event.target.value.replace(/[^A-Za-z]/ig))
-        event.target.value = event.target.value.replace(/[^A-Za-z]/ig, '')
-        setBoard_name(event.target.value)
-    }
-    const [board_href, setBoard_href] = useState("");
-    function board_hrefHandler(event) {
+    // 주소
+    const [href, sethref] = useState("");
+    function hrefHandler(event) {
         event.preventDefault();
         event.target.value = event.target.value.replace(/[^A-Za-z]/ig, '')
-        setBoard_href(event.target.value)
+        sethref(event.target.value)
     }
+
+
+    // type
     const [board_type, setBoard_type] = useState("");
-    function board_typeHandler(event) { event.preventDefault(); setBoard_type(event.target.value) }
-    const [board_description, setBoard_description] = useState("");
-    const [board_customComment, setBoard_customComment] = useState({
-        label_text: "fontawsome Code",
-        placeholder: "fontawsome Code 입력"
-    });
-    const [board_customCommentValue, setBoard_customCommentValue] = useState("");
-    function board_descriptionHandler(event) { event.preventDefault(); setBoard_description(event.target.value) }
-    const [board_custom, setBoard_custom] = useState("fontawsome");
-    function board_customHandler(event) {
+    function board_typeHandler(event) {
         event.preventDefault();
-        setBoard_custom(event.target.value)
-        switch (event.target.value) {
+        setBoard_type(event.target.value)
+    }
+
+    // 커스텀
+    const cC_default = {
+        type: 'select',
+        label_text: "fontawsome Code",
+    }
+
+    const [description, setdescription] = useState("");
+    const [customComment, setcustomComment] = useState(cC_default);
+
+    // 커스텀 코맨트
+    const [customCommentValue, setcustomCommentValue] = useState("default");
+    function descriptionHandler(event) {
+        event.preventDefault();
+        setdescription(event.target.value)
+    }
+
+    // 커스텀
+    const [custom, setcustom] = useState("fontawsome");
+    function customHandler(event) {
+        event.preventDefault();
+        const value = event.target.value
+        setcustom(value)
+        switch (value) {
             case "fontawsome":
-                setBoard_customComment({
-                    label_text: "fontawsome Code",
-                    placeholder: "fontawsome Code 입력"
-                });
+                setcustomComment(cC_default);
+                setcustomCommentValue("");
                 break;
             case "self":
-                setBoard_customComment({
+                setcustomComment({
+                    type: 'input',
                     label_text: "직접 입력",
                     placeholder: "직접 입력"
                 });
+                setcustomCommentValue("");
                 break;
         }
     }
-    function board_customCommentHandler(event) {
+    function customCommentHandler(event) {
         event.preventDefault();
-        event.target.value = event.target.value.replace(/[^A-Za-z]/ig, '')
-        setBoard_customCommentValue(event.target.value)
+        setcustomCommentValue(event.target.value)
     }
-    return (
-        <ul className="adm">
-            <OverlapLi title="게시판 설정" id="board" onClick={props.onClick} button_text={"제작"} onSubmit={submit}>
-                <ul>
-                    <OverlapLi type="input" value={board_name} label_id="board-name" label_text="게시판 이름" onChange={board_nameHandler} placeholder="게시판 이름(영어로 작성)" />
-                    <OverlapLi type="input" value={board_href} label_id="board-href" label_text="게시판 주소" onChange={board_hrefHandler} placeholder="board" />
-                    <OverlapLi type="input" value={board_description} label_id="board-description" label_text="게시판 설명" onChange={board_descriptionHandler} placeholder="설명(미작성시 이름으로 표기)" />
-                    <OverlapLi type="select" value={board_type} label_id="board-type" label_text="게시판 유형" onChange={board_typeHandler}>
-                        <option value="board" > 일반 </option>
-                        <option value="gallery"> 갤러리 </option>
-                    </OverlapLi>
-                    <OverlapLi type="select" value={board_custom} label_id="board-custom" label_text="커스텀 (아이콘)" onChange={board_customHandler}>
-                        <option value="fontawsome" > fontawsome </option>
-                        <option value="self"> 직접입력(미구현) </option>
-                    </OverlapLi>
-                    <OverlapLi type="input" value={board_customCommentValue} label_id="board-custom-comment" label_text={board_customComment.label_text} onChange={board_customCommentHandler} placeholder={board_customComment.placeholder} />
 
-                </ul>
-            </OverlapLi>
-        </ul>
+    // Setting Value
+    const nameSetting = {
+        type: 'input',
+        value: name,
+        label_id: "board-name",
+        label_text: "게시판 이름",
+        onChange: nameHandler,
+        placeholder: `게시판 이름`
+    }
+    const hrefSetting = {
+        type: 'input',
+        value: href,
+        label_id: 'board-href',
+        label_text: '게시판 url',
+        onChange: hrefHandler,
+        placeholder: 'ex) test [only English]'
+    }
+    const descriptionSetting = {
+        type: 'input',
+        value: description,
+        label_id: 'board-description',
+        label_text: '게시판 설명',
+        onChange: descriptionHandler,
+        placeholder: '표기이름(미기입시 이름으로 표기)'
+    }
+    const typeSetting = {
+        type: 'select',
+        value: board_type,
+        label_id: 'board-type',
+        label_text: '게시판 유형',
+        onChange: board_typeHandler
+    }
+    const customSetting = {
+        type: 'select',
+        value: custom,
+        label_id: 'board-custom',
+        label_text: '커스텀 (아이콘)',
+        onChange: customHandler,
+    }
+    const customCommentSetting = {
+        type: customComment.type,
+        value: customCommentValue,
+        label_id: 'board-custom-comment',
+        label_text: customComment.label_text,
+        onChange: customCommentHandler,
+        placeholder: customComment.placeholder,
+        icon: <FontAwsome data={customCommentValue} />,
+        // style: customComment.style
+    }
+    const coverSetting = {
+        title: '게시판 생성',
+        id: 'adm-board',
+        onClick: props.onClick,
+        onSubmit: submit
+    }
+
+    
+    useEffect(() => {
+    }, []);
+
+    return (
+        <Overlap {...coverSetting}>
+            <Overlap {...nameSetting} />
+            <Overlap {...hrefSetting} />
+            <Overlap {...descriptionSetting} />
+            <Overlap {...typeSetting}>
+                <option value="board" > 일반 </option>
+                <option value="gallery"> 갤러리 </option>
+            </Overlap>
+            <Overlap {...customSetting}>
+                <option value="fontawsome" > fontawsome </option>
+                <option value="self"> 직접입력(미구현) </option>
+            </Overlap>
+            <Overlap {...customCommentSetting} >
+                {
+                    FontAwsome({ type: 'data' })._data.map((el, index) => {
+
+                        return (
+                            <option value={el[0]} key={index}>
+                                {el[0]}
+                            </option>
+                        )
+                    })
+                }
+
+            </Overlap>
+        </Overlap>
     )
 
 }

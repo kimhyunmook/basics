@@ -5,8 +5,7 @@ import { writeBoard } from "../../actions/board_action";
 import { auth } from "../../actions/user_action";
 import Container from "../common/container";
 import { getDate } from "../../actions/tool_action";
-import { ListIcon, WriteIcon } from "../common/fontawsome";
-import { board_target } from '../../json/config';
+import { FontAwsome } from "../common/fontawsome";
 import { BoardWriteUi, Button, Li } from "./ui/boardUi";
 
 
@@ -66,10 +65,10 @@ function WriteBoard() {
     }
     let btn = [
         {
-            text:<WriteIcon/>
+            text:<FontAwsome data={"fa-pen"} />
         },
         {
-            text:<ListIcon/>,
+            text:<FontAwsome data={"fa-list"}/>,
             fnc: moveList
         }
         

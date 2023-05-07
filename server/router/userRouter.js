@@ -2,44 +2,39 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const bcrypt = require('bcrypt');
-const saltRounds = 10 // 암호화 처리하는 속도인가봄
+// const saltRounds = 10 // 암호화 처리하는 속도인가봄
 const cookieParser = require('cookie-parser');
 const {
     auth
 } = require('../middleware/auth');
 
 const {
-    readSQL
+    readSQL,
+    saltRounds,
 } = require('../util');
 
 router.use(cookieParser());
 
-router.post('/signUp', (req, res) => {
-    const param = [
-        req.body.id,
-        req.body.password,
-        req.body.email,
-        req.body.phone,
-        req.body.name,
-        req.body.gender
-    ];
-    var sql = `
+router.post('/signup', (req, res) => {
+    const param = Object.values(req.body);
+    param.push(0); // add role
+    const id = param[0]
+    let sql = `
         SELECT * 
         FROM users 
         WHERE id=?
     `
-
-    db.query(sql, param[0], (err, rows, fileds) => {
+    db.query(sql, id, async (err, rows, fileds) => {
         if (err) throw err;
-        let condition
+        let result
 
         if (rows.length >= 1) {
-            condition = {
+            result = {
                 signUp: false,
                 errType: 'ID overlap'
             }
         } else {
-            condition = {
+            result = {
                 signUp: true
             }
             bcrypt.hash(param[1], saltRounds, (err1, hash) => {
@@ -51,7 +46,7 @@ router.post('/signUp', (req, res) => {
             });
         }
 
-        res.status(200).json(condition)
+        await res.status(200).json(result)
     });
 });
 
@@ -62,20 +57,20 @@ router.post('/login', (req, res) => {
         id,
         password
     ];
-
     var sql = `
         SELECT *
         FROM users 
         WHERE id=?
     `;
     db.query(sql, param, (err, rows, fileds) => {
-        if (err) console.log(err)
-        if(rows.length === 0) {
-            return  res.status(200).json({
-                login:false
+        if (err) throw err;
+        if (rows.length === 0) {
+            return res.status(200).json({
+                login: false,
+                message: 'ID no exit'
             })
         }
- 
+
         var match = bcrypt.compareSync(param[1], rows[0].password);
         if (match) {
             let loginToken = Math.floor(Math.random() * 100000).toString() // token 생성
@@ -97,34 +92,35 @@ router.post('/login', (req, res) => {
                 loginToken,
                 id
             ];
-            db.query(sql, param, (err_) => {
-                if (err_) console.log(err_)
+            db.query(sql, param, (err1) => {
+                if (err1) throw err1;
+                sql = `SELECT * FROM users WHERE id=?`;
+                db.query(sql, [id], (err2, rows) => {
+                    if (err2) throw err2
+                    res.status(200).json({
+                        login: true,
+                        data: rows[0]
+                    })
+                })
             })
 
+        } else
             res.status(200).json({
-                _login: true,
-                token: loginToken
+                login: false,
+                message: 'PW error'
             })
-        } else {
-            res.status(200).json({
-                _login: false
-            })
-        }
+
     });
 });
 
-router.post('/logout', auth, async (req, res) => {
-    let token = req.user.login_token;
-    let id = req.user.id;
-    var sql = `
+router.post('/logout', async (req, res) => {
+    const id = req.body.id;
+    let sql = `
         SELECT * 
         FROM users
-        WHERE id=? OR login_token=?
+        WHERE id=?
     `;
-    var param = [
-        id,
-        token
-    ]
+    let param = id
     db.query(sql, param, (err) => {
         if (err) throw err;
 
@@ -132,24 +128,19 @@ router.post('/logout', auth, async (req, res) => {
             UPDATE users 
             SET login_token=null 
             WHERE id=? 
-            AND login_token=?
         `;
-        param = [
-            id,
-            token
-        ]
+        param = id
         db.query(sql, param, (err1) => {
             if (err1) throw err1;
-            res.redirect('/')
+            res.status(200).json({
+                login: false,
+                data: null,
+            })
         })
     })
 })
 
-router.get('/auth', auth, (req, res) => {
-    res.send(req.user);
-});
-
-router.put('/edit', (req, res) => {
+router.post('/edit', (req, res) => {
     var sql = `
         UPDATE users 
         SET password=?, phone=?, email=?
@@ -161,21 +152,28 @@ router.put('/edit', (req, res) => {
         req.body.email,
         req.body.id
     ]
+    let result;
     bcrypt.hash(param[0], saltRounds, (err, hash) => {
         if (err) throw err;
         param[0] = hash;
 
         db.query(sql, param, (err1) => {
             if (err1) throw err1;
-
-            res.status(200).json({
-                edit: true
-            });
+            sql = `SELECT * FROM users WHERE id=?`;
+            db.query(sql, param[param.length - 1], (err2, rows) => {
+                if (err2) throw err2
+                result = {
+                    edit: true,
+                    login: true,
+                    data: rows[0],
+                }
+                res.status(200).json(result);
+            })
         });
     });
 });
 
-router.delete('/delete', (req, res) => {
+router.post('/delete', (req, res) => {
     let sql = `
         DELETE FROM users
         WHERE id=?
@@ -185,8 +183,9 @@ router.delete('/delete', (req, res) => {
     ]
     db.query(sql, param, (err) => {
         if (err) throw err;
-
-        res.redirect('/')
+        res.status(200).json({
+            delete: true,
+        })
     })
 })
 

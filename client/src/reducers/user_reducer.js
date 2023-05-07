@@ -1,3 +1,5 @@
+import { user_auth } from "../actions/type";
+
 export default function (state = {}, action) {
     switch (action.type) {
         case 'register_user':
@@ -10,7 +12,7 @@ export default function (state = {}, action) {
                 ...state,
                 login: action.payload
             }
-        case 'auth_user':
+        case user_auth:
             return {
                 ...state,
                 auth: action.payload
@@ -20,6 +22,7 @@ export default function (state = {}, action) {
                 ...state,
                 edit: action.payload
             }
+
       
         default:
             return state;

@@ -165,7 +165,7 @@ textarea {
     width: 100%;
     height: 100vh;
     overflow-y: scroll;
-    padding: 65px 15%;
+    padding: 10px 15%;
     background: #fff; }
     #root .container.download {
       width: 70%;
@@ -232,27 +232,61 @@ textarea {
               padding-left: 1%;
               margin: 0; }
     #root .container .adm {
-      height: 80vh;
-      box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3), -5px -5px 10px rgba(170, 176, 255, 0.3); }
+      height: 82vh;
+      width: 65%;
+      margin: auto; }
       #root .container .adm-list {
-        border: 1px solid;
         overflow: hidden;
-        cursor: pointer; }
+        cursor: pointer;
+        border: 1px solid #000;
+        border-bottom: 0; }
+        #root .container .adm-list:last-of-type {
+          border-bottom: 1px solid #000; }
+        #root .container .adm-list.on {
+          box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3), -5px -5px 10px rgba(170, 176, 255, 0.3);
+          border: 0;
+          transition: .5s; }
+          #root .container .adm-list.on .adm-list-name {
+            transition: .5s;
+            border: 0;
+            background: #8e9fff;
+            color: #000; }
+            #root .container .adm-list.on .adm-list-name::after {
+              content: "✔";
+              display: block; }
+          #root .container .adm-list.on .adm-list-content {
+            height: inherit; }
         #root .container .adm-list-name {
           padding: 10px;
-          border: 1px solid;
           display: flex;
           justify-content: space-between; }
           #root .container .adm-list-name::after {
-            content: "✔";
+            content: "";
             display: block; }
         #root .container .adm-list-content {
           height: 0;
           transition: .5s; }
-          #root .container .adm-list-content.on {
-            height: inherit; }
-          #root .container .adm-list-content ul li {
-            margin: 0; }
+          #root .container .adm-list-content form {
+            padding-bottom: 10px; }
+            #root .container .adm-list-content form ul {
+              margin: 0 auto; }
+              #root .container .adm-list-content form ul li {
+                padding: 10px;
+                padding-left: 40px;
+                border-bottom: 1px solid #9e9e9e;
+                margin: 0; }
+                #root .container .adm-list-content form ul li label::before {
+                  content: "▶";
+                  margin-right: 20px; }
+                #root .container .adm-list-content form ul li input {
+                  width: 35%;
+                  height: 30px;
+                  padding-left: 2.5px;
+                  border-radius: 3px;
+                  border: 1px solid #9e9e9e; }
+                #root .container .adm-list-content form ul li select {
+                  border: 1px solid #9e9e9e;
+                  height: 30px; }
     #root .container .menu {
       display: flex;
       flex-wrap: wrap; }

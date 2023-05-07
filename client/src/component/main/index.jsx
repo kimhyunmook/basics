@@ -4,17 +4,16 @@ import Container from "../common/container";
 import { admDelete, needDownLoad } from "../../actions/adm_action";
 import { menuSetting } from "../../actions/tool_action";
 import { FontAwsome } from "../common/fontawsome";
-import { auth } from "../../actions/user_action";
+import { useSelector } from "react-redux";
 
 function Main() {
     const [menu, setMenu] = useState([]);
+    const reducer = useSelector(state => state);
+    console.log(reducer);
 
     useLayoutEffect(() => {
         let body = {}
-        // auth(body).payload.then((res) => {
 
-        // })
-        body = {}
         needDownLoad(body).payload
             .then(res => {
                 if (!res.Download) window.location.href = '/download?task=0';
@@ -34,8 +33,10 @@ function Main() {
                 {
                     menu.map((el, index) => {
                         let content;
-                        if (el.custom === "fontawsome") content = <FontAwsome data={el.custom_comment} />
-                        else content = el.name
+                        if (el.custom === "fontawsome")
+                            content = <FontAwsome data={el.custom_comment} />
+                        else
+                            content = el.name
 
                         return (
                             <li className="main-menuList" key={index}>

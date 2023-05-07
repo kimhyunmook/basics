@@ -13,8 +13,20 @@ router.post('/createboard', createMenu, (req, res) => {
     }), [], (err) => {
         if (err) throw err;
     })
-    res.send("게시판 생성")
-})
+    res.send("게시판 생성");
+});
 
+router.post('/settingmenu', (req, res) => {
+    let param = [];
+    console.log(req.body);
+    db.query(readSQL('/menu/select.sql'), param, (err, rows) => {
+        if (err) throw err;
+        let list = []
+        rows.map(el=>{
+            list.push(el); 
+        })
+        res.status(200).json(list)
+    })
+})
 
 module.exports = router

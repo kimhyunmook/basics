@@ -1,4 +1,5 @@
 import axios from "axios";
+import { user_auth, user_login } from "./type";
 
 export function registerUser(dataSubmit = {}) {
     const request = axios.post('/api/users/signUp', dataSubmit)
@@ -13,7 +14,7 @@ export function loginUser(dataSubmit) {
     const request = axios.post('/api/users/login', dataSubmit)
         .then(response => response.data)
     return {
-        type: 'login_user',
+        type: user_login,
         payload: request
     }
 }
@@ -21,8 +22,9 @@ export function loginUser(dataSubmit) {
 export function auth(dataSubmit) {
     const request = axios.get('/api/users/auth', dataSubmit)
         .then(response => response.data)
+
     return {
-        type: 'user_auth',
+        type: user_auth,
         payload: request
     }
 }

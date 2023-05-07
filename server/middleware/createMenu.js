@@ -25,10 +25,24 @@ function createMenu(req, res, next) {
         custom,
         custom_comment
     ]
-    db.query(readSQL('menu/insert.sql'), param, (err, rows) => {
+    let overlap = false;
+    db.query(`SELECT * FROM adm_menu`, [], (err, rows) => {
         if (err) throw err;
-        req.createName = name;
-        next();
+
+        rows.map(el=>{
+            if (req.body.href === el.href) {
+                overlap = true;
+                res.send('table overlap')
+                return;
+            }  
+        })
+        if(overlap === false) {
+            db.query(readSQL('menu/insert.sql'), param, (err, rows) => {
+                if (err) throw err;
+                req.createName = req.body.table_name;
+                next();
+            })
+        }
     })
 
 }

@@ -1,34 +1,36 @@
-import { useLayoutEffect,useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { deleteCookie } from "../../actions/tool_action";
-import { loginToken } from "../../actions/type";
-import { auth,deleteUser } from "../../actions/user_action"
 import Container from "../common/container";
-import { DeleteUserIcon, FixIcon } from "../common/fontawsome";
-import { Li } from "./ui/userUi";
+import { FontAwsome } from "../common/fontawsome";
+import { useDispatch, useSelector } from "react-redux";
+import { _Delete } from "../../store/userSlice";
 
-function MyPage () {
-    const [userInfo,setUserInfo] = useState('')
+function MyPage() {
+    const reducer = useSelector(state => state);
+    const [userInfo, setUserInfo] = useState(reducer.userInfo)
     const navigate = useNavigate();
-    useLayoutEffect(()=>{
-        auth().payload.then(res=>{
-            setUserInfo(res);
-        });
-    },[]);
+    const dispatch = useDispatch();
+    if (!userInfo.login) {
+        setTimeout(async () => {
+            alert('접근이 불가합니다.')
+            await navigate('/')
+        }, 100)
+    }
 
     const userEdit = (event) => {
         event.preventDefault();
         navigate('/myPage/edit')
     }
-    
-    const userDelete = (event) => {
+
+    const userDelete = async (event) => {
         event.preventDefault();
-        if(window.confirm('정말 삭제 하시겠습니까?')) {
-            deleteUser({id:userInfo.id}).payload
-            .then(() => {
-                deleteCookie(loginToken)
-                // navigate('/');
-            })
+        let body = {
+            id: userInfo.id
+        }
+        if (window.confirm('정말 삭제 하시겠습니까?')) {
+            dispatch(_Delete(body))
+            await alert('삭제되었습니다.')
+            await navigate('/')
         } else {
             return;
         }
@@ -37,32 +39,33 @@ function MyPage () {
     return (
         <Container>
             <ul className="myPage">
-                <Box class_name={ 'user_id' } tag_name={ 'ID' } value={userInfo.id} />
-                <Box class_name={ 'user_class' } tag_name={ '이용자 등급' } value={userInfo.isAdmin === true ? '관리자':'일반'} />
-                <Box class_name={ 'user_name' } tag_name={ '이름' } value={userInfo.name} />
-                <Box class_name={ 'user_gender' } tag_name={ '성별' } value={userInfo.gender} />
-                <Box class_name={ 'user_email' } tag_name={ '이메일' } value={userInfo.email} />
+                <Box class_name={'user_id'} tag_name={'ID'} value={userInfo.data.id} />
+                <Box class_name={'user_class'} tag_name={'이용자 등급'} value={userInfo.data.role === 1 ? '관리자' : '일반'} />
+                <Box class_name={'user_name'} tag_name={'이름'} value={userInfo.data.name} />
+                <Box class_name={'user_gender'} tag_name={'성별'} value={userInfo.data.gender} />
+                <Box class_name={'user_email'} tag_name={'이메일'} value={userInfo.data.email} />
+                <Box class_name={'user_phone'} tag_name={'핸드폰'} value={userInfo.data.phone} />
             </ul>
             <div className="btnArea">
-                <button className={'edit_btn button'} onClick={ userEdit }>
-                    <FixIcon />
+                <button className={'edit_btn button'} onClick={userEdit}>
+                    <FontAwsome data={"fa-wrench"} />
                 </button>
-                <button className={'delete_btn button'} onClick={ userDelete }>
-                    <DeleteUserIcon />
+                <button className={'delete_btn button'} onClick={userDelete}>
+                    <FontAwsome data={"fa-user-xmark"} />
                 </button>
             </div>
         </Container>
     );
 }
 
-function Box ({ class_name, tag_name, value }) {
+function Box({ class_name, tag_name, value }) {
     return (
-        <li className={`${ class_name } list`}>
+        <li className={`${class_name} list`}>
             <p className="tag_name">
-                { tag_name }
+                {tag_name}
             </p>
             <p className="value">
-                { value }
+                {value}
             </p>
         </li>
     )

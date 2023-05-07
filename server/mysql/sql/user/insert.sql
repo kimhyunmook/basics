@@ -1,1 +1,1 @@
-INSERT INTO `users`(`id`, `password`, `email`, `phone`, `name`, `gender`, `role`) VALUES (?,?,?,?,?,?,?)
+INSERT INTO `users`(`id`, `password`, `name`, `email`, `phone`, `gender`, `role`) VALUES (?,?,?,?,?,?,?)

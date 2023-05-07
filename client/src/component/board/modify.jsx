@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { auth } from "../../actions/user_action";
 import { lookContent, modify } from "../../actions/board_action";
-import { FixIcon } from "../common/fontawsome";
+import { FontAwsome } from "../common/fontawsome";
 import { BoardWriteUi, Button, Li } from "./ui/boardUi";
 
 
@@ -76,7 +76,7 @@ function ModifyBoard () {
                     <textarea name="content" cols="30" rows="10" value={ textArea } onChange={ onTextareaHandler }></textarea> 
                 </Li>
                 <Li>
-                    <Button btn={[{text:<FixIcon/>}]}></Button>
+                    <Button btn={[{text:<FontAwsome data={"fa-wrench"}/>}]}></Button>
                 </Li>
             </BoardWriteUi>
         </Container>
