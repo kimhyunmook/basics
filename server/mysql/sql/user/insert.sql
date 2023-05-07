@@ -1,0 +1,1 @@
+INSERT INTO `users`(`id`, `password`, `name`, `email`, `phone`, `gender`, `role`) VALUES (?,?,?,?,?,?,?)
