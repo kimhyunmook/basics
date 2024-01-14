@@ -1,38 +1,27 @@
-import Container from "../common/container";
-import { useLayoutEffect,useState } from 'react';
+import { Container2 } from '../common/commonUi';
+import { useLayoutEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { auth } from "../../actions/user_action";
-import { lookContent, modify } from "../../actions/board_action";
+import { useDispatch, useSelector } from "react-redux";
 import { FontAwsome } from "../common/fontawsome";
 import { BoardWriteUi, Button, Li } from "./ui/boardUi";
+import { _Modify } from "../../store/boardSlice";
+import util from "../../util";
 
 
-function ModifyBoard () {
-    const path = window.location.pathname.split('/');
-    const [w_id,setW_id] = useState('');
-    const [userInfo,setUserInfo] = useState('');
-    const [subject,setSubject] = useState('');
-    const [textArea,setTextArea] = useState('');
-    const navigate = useNavigate();
+function ModifyBoard() {
+    const store = useSelector(state => state);
+    const path = util.path();
+    const userInfo = store.userInfo.data;
+    const w_id = store.boardInfo.view.w_id;
+    const [subject, setSubject] = useState(store.boardInfo.view.subject);
+    const [textArea, setTextArea] = useState(store.boardInfo.view.content);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    let body, config;
 
-    useLayoutEffect(()=>{
-        auth({}).payload
-        .then(res=>{
-            setUserInfo(res)
-        })
+    useLayoutEffect(() => {
 
-        dispatch(lookContent({
-            name:path[2],
-            w_num:path[4]
-        })) 
-        .then(res=>{
-            setW_id(res.payload.w_id);
-            setSubject(res.payload.subject);
-            setTextArea(res.payload.content);
-        })
-    },[]);
+    }, []);
 
     const onSubjectHandler = (event) => {
         let value = event.currentTarget.value
@@ -42,30 +31,24 @@ function ModifyBoard () {
         let value = event.currentTarget.value
         setTextArea(value)
     }
-    console.log(w_id);
 
-    const onModify = (event) => {
+    const onModify = async (event) => {
         event.preventDefault();
-
-        let body = {
-            w_id:w_id,
-            subject:subject,
-            content:textArea
+        body = {
+            w_id: w_id,
+            name: path[2],
+            subject: subject,
+            content: textArea
         }
-        dispatch(modify(body,{
-            name:path[2],
-            w_num:path[4]
-        }))
-        .then(res=> {
-            alert('수정되었습니다.');
-            navigate(`/board/${path[2]}/contents/${path[4]}`);
-        })
+        dispatch(_Modify(body));
+        await alert('수정되었습니다.');
+        await navigate(`/board/${path[2]}/contents/${path[4]}`);
     }
-    return(
-        <Container>
+    return (
+        <Container2 info={{className:"container-normal"}}>
             <BoardWriteUi submit={onModify} title="글쓰기">
                 <Li name="subject" text="제목">
-                    <input type="text" value={ subject } onChange={ onSubjectHandler }/>
+                    <input type="text" value={subject} onChange={onSubjectHandler} />
                 </Li>
                 <Li name="id" text="작성자">
                     <p>
@@ -73,13 +56,13 @@ function ModifyBoard () {
                     </p>
                 </Li>
                 <Li name="content" text="내용">
-                    <textarea name="content" cols="30" rows="10" value={ textArea } onChange={ onTextareaHandler }></textarea> 
+                    <textarea name="content" cols="30" rows="10" value={textArea} onChange={onTextareaHandler}></textarea>
                 </Li>
                 <Li>
-                    <Button btn={[{text:<FontAwsome data={"fa-wrench"}/>}]}></Button>
+                    <Button btn={[{ text: <FontAwsome data={"fa-wrench"} /> }]}></Button>
                 </Li>
             </BoardWriteUi>
-        </Container>
+        </Container2>
     )
 }
 

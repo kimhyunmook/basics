@@ -1,12 +1,12 @@
 import React from "react";
-import { faAngleLeft, faAngleRight, faBars, faChalkboard, faHouse, faList, faPen, faPenNib, faPerson, faPersonDress, faTrash, faUnlockKeyhole, faUser, faUserLock, faUserXmark, faWrench, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faAngleLeft, faAngleRight, faBars, faChalkboard, faHouse, faList, faPen, faPenNib, faPerson, faPersonDress, faScrewdriverWrench, faTrash, faUnlockKeyhole, faUser, faUserLock, faUserXmark, faWrench, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function FontAwsome(props) {
     let data = props.data;
     let type = props.type;
     let fontData = [
-        ['default','😊'],
+        ['default', '😊'],
         ['fa-user', faUser],
         ['fa-house', faHouse],
         ['fa-chalkboard', faChalkboard],
@@ -25,29 +25,30 @@ export function FontAwsome(props) {
         ['fa-person-dress', faPersonDress],
         ['fa-user', faUser],
         ['fa-user-lock', faUserLock], //admin
+        ['fa-screwdriver-wrench', faScrewdriverWrench], //admin
     ]
 
-    if(data !== 'default') 
-    fontData.map(targetData => {
-        let text = targetData[0];
-        let el = targetData[1];
-        if (data === text) data = el;
-    })
+    if (data !== 'default')
+        fontData.map(targetData => {
+            let text = targetData[0];
+            let el = targetData[1];
+            if (data === text) data = el;
+        })
 
     if (type === 'data')
         return {
-            _data : fontData
+            _data: fontData
         }
     else if (type === 'element' || type === undefined) {
         if (data === 'default' || data === '') {
-            return( fontData[0][1] )
+            return (fontData[0][1])
         } else {
             return (
                 <FontAwesomeIcon icon={data} />
             )
         }
     }
-    
+
 }
 
 

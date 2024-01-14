@@ -15,8 +15,8 @@ function getDate (type) {
     let seconds = time.getSeconds();
     let display;
 
-    if (month < 10) month = `0${ month }`;
-    if (day < 10) day = `0${ day }`;
+    if (month < 10) month = `${ month }`;
+    if (day < 10) day = `${ day }`;
     if (hour < 10) hour = `0${ hour }`;
     if (minutes < 10) minutes = `0${ minutes }`;
     if (seconds < 10) seconds = `0${ seconds }`;

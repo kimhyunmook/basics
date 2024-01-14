@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from 'redux-persist';
+import Test from './component/test/test';
 
 export let persistor = persistStore(store)
 
@@ -19,7 +20,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <Provider store={ createStoreWithMiddleware (reducers) }>
   <Provider store={store}>
-    <PersistGate loading={null} persistor={persistor}>
+    <PersistGate loading={<Test />} persistor={persistor}>
       <App />
     </PersistGate>
   </Provider>

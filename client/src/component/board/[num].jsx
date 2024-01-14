@@ -1,25 +1,28 @@
-import { useLayoutEffect,useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../../actions/user_action'
-import { lookContent, deleteContent, replyAction, replyList, varValue, replyDelete } from '../../actions/board_action'
-import Container from '../common/container';
-import { MenuIcon, PenIcon, FontAwsome } from '../common/fontawsome';
-import { getDate } from '../../actions/tool_action';
+import { Container2 } from '../common/commonUi';
 import Reply from './reply';
+import { FontAwsome } from '../common/fontawsome';
+import { getDate } from '../../actions/tool_action';
+import { _InsertWrite, _ViewContent, _DeleteTarget } from '../../store/boardSlice';
+import { BtnArea } from '../common/commonUi';
+import util from '../../util';
 
 
-function ContentBoard () {
-    const [userInfo,setUserInfo] = useState('');
-    const [boardInfo,setBoardInfo] = useState('');
-    const [w_comment, setW_comment] = useState('');
-    const [hit, setHit] = useState('');
+function ContentBoard() {
+    const store = useSelector(state => state)
+    const userInfo = store.userInfo.data;
+    const [boardInfo, setBoardInfo] = useState('');
+    const [w_comment, setW_comment] = useState(0);
     const [replyText, setReplyText] = useState('');
     const [replyView, setReplyView] = useState([]);
     const [replyState, setReplyState] = useState(false);
+    const [subject, setSubject] = useState('');
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const path = window.location.pathname.split('/');
+    const path = util.path();
+    let body;
 
     const moveList = (event) => {
         event.preventDefault();
@@ -29,53 +32,45 @@ function ContentBoard () {
         event.preventDefault();
         navigate(`/board/${path[2]}/modify/${boardInfo.w_num}`)
     }
-
-    const deleteList = (event) => {
-        event.preventDefault();
-       
-        let body = {}
-        if(window.confirm("삭제하시겠습니까?")) {
-            deleteContent(body,{
-                name:path[2],
-                w_num:path[4]
-            }).payload.then(()=>{
-                alert('삭제되었습니다.')
-                navigate(`/board/${path[2]}/1`)
-            })
+    const deleteList = useCallback(async () => {
+        if (window.confirm("삭제 하시겠습니까?")) {
+            body = {
+                name: path[2],
+                w_num: path[4]
+            }
+            await dispatch(_DeleteTarget(body))
+            await navigate(`/board/${path[2]}/1`);
         } else return
-    }
+    });
 
     const onReplyHandler = (event) => {
+        event.preventDefault();
         setReplyText(event.currentTarget.value);
     }
 
     const replyButton = (event) => {
         event.preventDefault();
-
-        if(!replyState) setReplyState(true);
+        if (!replyState) setReplyState(true);
         else setReplyState(false);
     }
-
-    const reply = (event) => {
+    const reply = async (event) => {
         event.preventDefault();
-
-        let body ={
-            w_comment:w_comment, 
-            w_time:getDate(),
-            d_time:getDate('display'),
-            content:replyText,
-            user_id:userInfo.id,
-            board_type:boardInfo.board_type,
-            name:path[2],
-            w_num:path[4]
+        body = {
+            w_comment: w_comment,
+            w_time: getDate(),
+            d_time: getDate('display'),
+            content: replyText,
+            user_id: userInfo.id,
+            board_type: 'reply',
+            w_num: path[4],
+            subject: `reply_${path[4]}`,
+            url: `/${path[2]}`,
+            notice: 'false'
         }
 
-        replyAction(body).payload
-        .then(res=>{ 
-            if(res.reply === 'success'){
-                window.location.reload();
-            } else alert("댓글 작성 실패");
-        })
+        await setReplyState(false);
+        await dispatch(_InsertWrite(body));
+        await setReplyView(store.boardInfo.reply);
     }
 
     const replyVarValueEventHandler = (event) => {
@@ -88,148 +83,144 @@ function ContentBoard () {
         }
     }
 
-    const replyDel= (event) => {
+    const replyDel = async (event) => {
         event.preventDefault();
-        let replyTraget = event.currentTarget.classList[1];
-        console.log(replyTraget);
-        replyDelete({
-            name:path[2],
-            w_id:replyTraget
-        }).payload.then(()=>{
-            window.location.reload();
-        })
+        const replyTarget = event.target.classList[1];
+        if (window.confirm('삭제하시겠습니까')) {
+            body = {
+                name: path[2],
+                w_id: replyTarget
+            }
+            await dispatch(_DeleteTarget(body))
+
+        } else return
     }
 
-    useLayoutEffect(()=>{
-        auth({}).payload.then(res => { setUserInfo(res) })
+    useEffect(() => {
+        if (store.boardInfo.view !== undefined) {
+            setBoardInfo(store.boardInfo.view);
+            setW_comment(store.boardInfo.view.w_comment);
+            setReplyView(store.boardInfo.reply);
+            if (store.boardInfo.view.subject !== undefined) {
+                let last = 20;
+                if (store.boardInfo.view.subject.length > last) {
+                    setSubject(store.boardInfo.view.subject.substr(0, last) + '....')
+                } else setSubject(store.boardInfo.view.subject);
+            }
+        }
+    }, [store])
 
-        dispatch(lookContent({
-            name:path[2],
-            w_num:path[4]
-        }))
-        .then(res=>{
-            varValue({
-                name:path[2],
-                w_num:path[4],
-                hit:res.payload.hit+1
-            }).payload.then((res2)=>{
-                setHit(res2.hit);
-            })
-            setBoardInfo(res.payload);
-            setW_comment(res.payload.w_comment);
-        });
+    useLayoutEffect(() => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        body = {
+            name: path[2],
+            w_num: path[4]
+        }
+        dispatch(_ViewContent(body));
+    }, [])
+    let topBtn = [
+        {
+            Name: <FontAwsome data={"fa-list"} />,
+            Click: moveList
+        },
+        {
+            Name: <FontAwsome data={"fa-wrench"} />,
+            Click: moveModify,
+            ternaryOperator: {
+                condition: userInfo.id === boardInfo.user_id,
+                reverseResult: null,
+            }
+        },
+        {
+            Name: "삭제",
+            Click: deleteList,
+            ternaryOperator: {
+                condition: userInfo.id === boardInfo.user_id,
+                reverseResult: null,
+            }
+        }
+    ]
 
-        replyList({
-            name:path[2],
-            w_num:path[4]
-        }).payload
-        .then(res=>{
-            setReplyView(res.array);
-        })
-    },[])
-    return(
-        <Container>
+
+    return (
+        <Container2 info={{ className: "container-normal" }}>
             <div className="board board-Mini">
                 <div className="board-content">
-                   
+
                     <div className="flex-box subjectLine">
                         <div className="board-content-sbj">
-                            { boardInfo.subject } 
+                            {subject}
                         </div>
                         <div className="board-content-right">
                             <p className="hit">
-                                조회수: { hit }
+                                조회수: {boardInfo.hit + 1}
                             </p>
                             <p className='user'>
-                                작성자: { boardInfo.user_id }
+                                작성자: {boardInfo.user_id}
                             </p>
                             <p className='time'>
-                                { boardInfo.w_time }
+                                {boardInfo.w_time}
                             </p>
-                            <div className="btnArea">
-                                <button className='button' onClick={ moveList }>
-                                    <FontAwsome data={"fa-list"} />
-                                </button>
-                                {
-                                    userInfo.id === boardInfo.user_id 
-                                    ? <button className='button' onClick={ moveModify }>
-                                        <FontAwsome data={"fa-wrench"} />
-                                    </button>
-                                    : null
-                                }
-                                {
-                                    userInfo.id === boardInfo.user_id 
-                                    ? <button className='button' onClick={ deleteList }>
-                                        <FontAwsome data={"fa-trash"} />
-                                    </button>
-                                    : null
-                                }
-                            </div>
+                            <BtnArea info={topBtn} />
                         </div>
                     </div>
-                 
+
                     <pre className="board-content-txt">
                         {boardInfo.content}
                     </pre>
-                    
+
                 </div>
-                <div className="btnArea">
-                    {
-                        replyState !== true ?
-                        <button className="reply-button button" onClick={replyButton}>
-                            댓글 작성
-                        </button> :
-                        <button className="reply-button-x button" onClick={replyButton}>
-                            <FontAwsome data={"fa-xmark"} />
-                        </button>
-                    }
-                </div>
+                {
+                    !replyState ?
+                        <BtnArea className={"replay-button"} info={{ Name: "댓글 작성", Click: replyButton }} /> :
+                        <BtnArea className={"replay-button-x"} info={{ Name: <FontAwsome data={"fa-xmark"} />, Click: replyButton }} />
+                }
                 <div className="reply">
                     {
-                        replyState === true ? 
-                        <Reply id={ userInfo.id } text={ replyText } textEvent={ onReplyHandler } click={ reply } /> : null
+                        replyState ?
+                            <Reply id={userInfo.id} text={replyText} textEvent={onReplyHandler} click={reply} /> : null
                     }
                     <ul className="reply-list">
                         {
-                            replyView.map((el, index)=>{
-                                return(
-                                    <li className="reply-info" key={ index }>
+                            replyView.map((el, index) => {
+                                return (
+                                    <li className="reply-info" key={index}>
                                         <p className="reply-userId">
                                             {userInfo.id === boardInfo.user_id ? <FontAwsome data={"fa-pen-nib"} /> : null}
-                                            <span style={{marginLeft:'5px'}}>
-                                                { el.user_id }
+                                            <span style={{ marginLeft: '5px' }}>
+                                                {el.user_id}
                                             </span>
                                         </p>
                                         <p className="reply-content">
-                                            { el.content }
+                                            {el.content}
                                         </p>
                                         <p className="reply-time">
-                                            { el.d_time }
+                                            {el.d_time}
                                         </p>
-                                     
+
                                         <a href="#" className='reply-varValue' >
-                                            <p onClick={ replyVarValueEventHandler }>
+                                            <p onClick={replyVarValueEventHandler}>
                                                 <FontAwsome data={"fa-bars"} />
                                             </p>
                                             <ul className="reply-varValue-depth">
-                                                <li className={`delete ${el.w_id}`} onClick={ replyDel }>
+                                                <li className={`delete ${el.w_id}`} onClick={replyDel}>
                                                     삭제
                                                 </li>
                                                 <li>
                                                     추천
                                                 </li>
-                                            </ul> 
+                                            </ul>
                                         </a>
                                     </li>
                                 )
                             })
                         }
                     </ul>
-                    
+
                 </div>
             </div>
-        </Container>
+        </Container2>
     )
-} 
- 
-export default ContentBoard ; 
+}
+
+export default ContentBoard; 

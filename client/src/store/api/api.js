@@ -1,26 +1,61 @@
 import axios from "axios"
 
-// export const commonAPi = async (body) => {
-//     if (body.url === undefined) {
-//         console.error('url을 넣어 주세요 ex) url: "menu"');
-//         return;
-//     }
-//     return axios
-//         .post(`/api/setting/${body.url}`, body.payload)
-//         .then(res => res.data)
-//         .catch(error => error);
-// }
+function getUrl(body) {
+    const url = body.payload.url;
+    return url;
+}
 
 export const commonAPi = {
     post: async (body) => {
+        const url = getUrl(body)
         return axios
-            .post(`/api/setting/${body.url}`, body.payload)
+            .post(`/api${url}`, body.payload)
             .then(res => res.data)
             .catch(error => error);
     },
     get: async (body) => {
+        const url = getUrl(body)
         return axios
-            .get(`/api/setting/${body.url}`, body.payload)
+            .get(`/api${url}`, body.payload)
+            .then(res => res.data)
+            .catch(error => error);
+    },
+}
+
+export const boardApi = {
+    list: async (body) => {
+        const url = getUrl(body)
+        return axios
+            .get(`/api/board/list${url}`, body.payload)
+            .then(res => res.data)
+            .catch(error => error);
+    },
+    write: async (body) => {
+        const url = getUrl(body);
+        return axios
+            .post(`/api/board${url}/write`, body.payload)
+            .then(res => res.data)
+            .catch(error => error);
+    },
+    view: async (body) => {
+        return axios
+            .post(`/api/board/${body.payload.name}/contents/${body.payload.w_num}`)
+            .then(res => res.data)
+            .catch(error => error);
+    },
+    modify: async (body) => {
+        return axios
+            .post(`/api/board/${body.payload.name}/modify/${body.payload.w_id}`, body.payload)
+            .then(res => res.data)
+            .catch(error => error);
+    },
+    delete: async (body) => {
+        let target;
+        if (body.payload.w_num !== undefined) target = body.payload.w_num;
+        else target = body.payload.w_id
+
+        return axios
+            .post(`/api/board/${body.payload.name}/delete/${target}`, body.payload)
             .then(res => res.data)
             .catch(error => error);
     }

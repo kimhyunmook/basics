@@ -15,8 +15,13 @@ export default function ADM() {
         }
         else content.classList.remove('on');
     }
+    const style = {
+        margin: '90px auto 0',
+        padding: "2% 100px",
+        maxWidth: "1200px"
+    }
     return (
-        <Container adm={true}>
+        <Container adm={true} style={style}>
             <ul className="adm">
                 <ADM_Content onClick={listOpen} />
                 <ADM_Board onClick={listOpen} />

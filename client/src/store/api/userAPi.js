@@ -34,3 +34,10 @@ export const userDelete = async (body) => {
         .then(res => res.data)
         .catch(error => error);
 }
+
+export const register = async (body) => {
+    return axios
+        .post(`/api/users/signup`, body.payload)
+        .then(res => res.data)
+        .catch(error => error);
+}

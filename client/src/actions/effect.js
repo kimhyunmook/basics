@@ -1,6 +1,7 @@
 /**
- * 광택 효과
+ * 광택 효과 (만들다 말았음)
  * @설명 onMouseOver 효과 position:absolute or relative 필수
+ * 왜캐 귀찮지 만들기....
  */
 export const polish = (event) => {
     event.stopPropagation()

@@ -29,15 +29,12 @@ export default function ADM_Menu(props) {
     }
     const submit = (event) => {
         event.preventDefault();
-    
-        adminAction(body).payload.then(res => {
-        })
     }
 
     useEffect(() => {
-        adminAction(body).payload.then(res => {
-            setMenu(res)
-        })
+        // adminAction(body).payload.then(res => {
+        //     setMenu(res)
+        // })
     }, []);
 
     function selectChange(event) {

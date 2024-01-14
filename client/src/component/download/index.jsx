@@ -2,6 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { settingDownLoad } from "../../actions/adm_action";
 import Container from "../common/container";
+import { useDispatch } from "react-redux";
+import { _Condtion } from "../../store/menuSlice";
+import { Container2 } from "../common/commonUi";
 
 export default function NeedDownLoad(props) {
     const form = useRef();
@@ -9,6 +12,7 @@ export default function NeedDownLoad(props) {
     const [formStyle, setFormStyle] = useState({});
     const [coverStyle, setCoverStyle] = useState({});
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const pathTask = window.location.href.split('?task=')[1];
 
     const next1 = (event) => {
@@ -30,8 +34,13 @@ export default function NeedDownLoad(props) {
     }
     const next3 = (event) => {
         event.preventDefault();
-        window.location.href = '/';
+        let body = { url: '/setting/menu' }
+        dispatch(_Condtion(body))
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 100)
     }
+
     useEffect(() => {
         let widLen = settingCover.current.childNodes.length;
         setCoverStyle({
@@ -55,7 +64,7 @@ export default function NeedDownLoad(props) {
     const onUserHandler = (event) => {
         setDbUser(event.currentTarget.value)
     }
-    const [dbPassword, setDbPassword] = useState('sodds1346!')
+    const [dbPassword, setDbPassword] = useState('1234')
     const onPasswordHandler = (event) => {
         setDbPassword(event.currentTarget.value)
     }
@@ -123,6 +132,7 @@ const OverlapUi = (props) => {
         </div>
     )
 }
+
 const InputLi = (props) => {
     return (
         <li>

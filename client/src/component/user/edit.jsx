@@ -2,9 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Container from '../common/container';
+import { Container2 } from '../common/commonUi';
 import { RegisterUi, Li } from './ui/userUi';
 import { _Edit } from '../../store/userSlice';
+import util from '../../util';
 
 function UserEdit() {
     const dispatch = useDispatch();
@@ -16,9 +17,10 @@ function UserEdit() {
     const [_EditPassword, setEditPassword] = useState("");
     const [_EditPassword2, setEditPassword2] = useState("");
     const [Name, setName] = useState("");
+    const [nickName, setNickName] = useState("");
     const [Email, setEmail] = useState("");
     const [Phone, setPhone] = useState("");
-    const [Gender, setGender] = useState("");
+    const [Gender, setGender] = useState(userInfo.gender);
     const [file, setFile] = useState("");
     const onDrop = useCallback((acceptedFiles) => {
         acceptedFiles.forEach((file) => {
@@ -34,6 +36,7 @@ function UserEdit() {
         setName(userInfo.name)
         setPhone(userInfo.phone)
         setEmail(userInfo.email)
+        setNickName(userInfo.nickname)
     }, [reducer])
 
     // function
@@ -50,8 +53,12 @@ function UserEdit() {
         setEmail(value)
     }
     const onPhoneChangeHandler = (event) => {
-        let value = event.currentTarget.value
+        let value = util.phoneNumber(event)
         setPhone(value)
+    }
+    const onNickNameChangeHandler = (event) => {
+        let value = event.currentTarget.value
+        setNickName(value)
     }
 
     const onSubmitHandler = async (event) => {
@@ -73,15 +80,18 @@ function UserEdit() {
             id: _Id,
             password: _EditPassword,
             name: Name,
+            nickname: nickName,
             email: Email,
             phone: Phone
         }
 
         dispatch(_Edit(body))
-        await navigate('/')
+        alert('수정 완료됐습니다.')
+        // navigate('/#')
+        window.location.href = '/';
     }
     return (
-        <Container>
+        <Container2 info={{ className: 'container-normal' }}>
             <RegisterUi name="정보 수정" submit={onSubmitHandler} submitBtn="수정">
                 <Li name="id">
                     <input disabled type="text" value={_Id} name="id" />
@@ -92,8 +102,15 @@ function UserEdit() {
                 <Li name="password2">
                     <input required type="password" value={_EditPassword2} name="password2" placeholder='Password 확인' onChange={onPasswordChangeHandler2} />
                 </Li>
+                <Li name="nick">
+                    {
+                        userInfo.role === 1 ?
+                            <input disabled type="text" value={nickName} name="nickname" placeholder='nickname' onChange={onNickNameChangeHandler} /> :
+                            <input required type="text" value={nickName} name="nickname" placeholder='nickname' onChange={onNickNameChangeHandler} />
+                    }
+                </Li>
                 <Li name="phone">
-                    <input required type="phone" value={Phone} name="phone" placeholder='Phone' onChange={onPhoneChangeHandler} />
+                    <input required type="phone" value={Phone} name="phone" placeholder='Phone' maxLength={13} onChange={onPhoneChangeHandler} />
                 </Li>
                 <Li name="name">
                     <input disabled type="text" value={Name} name="name" placeholder='Name' />
@@ -101,14 +118,14 @@ function UserEdit() {
                 <Li name="gender">
                     {
                         Gender === "남자" ? "MAN" :
-                            Gender === "여자" ? "WOMAN" : "없음"
+                            Gender === "여자" ? "WOMAN" : "관리자"
                     }
                 </Li>
                 <Li name="E-mail">
                     <input required type="email" value={Email} name="email" placeholder='E-mail' onChange={onEmailChangeHandler} />
                 </Li>
             </RegisterUi>
-        </Container>
+        </Container2>
     )
 }
 

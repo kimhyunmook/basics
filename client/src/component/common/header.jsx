@@ -1,99 +1,154 @@
-import { useState, useLayoutEffect, useEffect } from "react";
-import List from './list'
+import { useState, useLayoutEffect, useEffect, useRef } from "react";
 import LoginList from "./loginList";
 import { loginToken } from "../../actions/type";
-import { menuSetting } from "../../actions/tool_action";
 import { FontAwsome } from "./fontawsome";
-import { useDispatch, useSelector } from "react-redux";
-// import { info, getUser } from "../../store/userSlice";
-
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { basicInfo } from "../../store/basicSlice";
+import Logo from "./logo";
+import util from "../../util";
+import { getSetting } from "../../store/settingSlice";
 
 function Header(props) {
-    const cookie = document.cookie;
+    const store = useSelector(state => state);
     const loginCookieName = loginToken;
     const [userInfo, setUserInfo] = useState({});
-    const path = window.location.pathname.split('/');
-    const dispatch = useDispatch();
-    const reducer = useSelector((state) => state);
-
-    // console.log(reducer)
-
-
-    useEffect(() => {
-        setUserInfo(reducer.userInfo.user);
-    }, [reducer])
-
-    let x_token = '';
-    if (cookie !== '') x_token = cookie.split(`${loginCookieName}=`);
-    x_token = x_token[1];
-
     const [menu, setMenu] = useState([]);
+    const [depthMenu, setDepthMenu] = useState('');
+    const path = util.path();
+    const menuInfo = store.menuInfo.data;
+    let body, i;
+    const header = useRef(null);
 
-    useLayoutEffect(() => {
-        if (x_token !== undefined) {
-            let body = {
-                id: x_token,
-                login_token: cookie
+    const [scrollY, setScrollY] = useState(0);
+    const [scrollToggle, setScrollToggle] = useState(false);
+
+    // scroll
+    useEffect(() => {
+        window.addEventListener('scroll', () => {
+            setScrollY(window.scrollY)
+        })
+    }, [scrollY])
+    useEffect(() => {
+        setUserInfo(store.userInfo.data);
+        if (path[1].split('?')[0] !== 'download') {
+            if (menuInfo !== undefined) {
+                setMenu(menuInfo);
+                // eslint-disable-next-line react-hooks/exhaustive-deps
+                for (i = 0; i < menuInfo.length; i++) {
+                    if (menuInfo[i].parent !== 0)
+                        setDepthMenu(menuInfo[i]);
+                }
             }
-            // dispatch(getUser(body))
         }
-
-        if (path[1].split('?')[0] !== 'download')
-            setTimeout(() => {
-                menuSetting().then((res) => {
-                    setMenu(res);
-                })
-            }, 100)
-
-        const description = document.querySelectorAll('.description');
-        for (let i = 0; i < description.length; i++) {
-            const target = description[i].parentNode;
-            target.addEventListener('mouseover', () => {
-                description[i].style = 'display:block';
-            })
-            target.addEventListener('mouseout', () => {
-                description[i].style = 'display:none';
-            })
-        }
-    }, []);
+    }, [store,])
 
     return (
-        <header id="header" >
-            <div className="logo">
-                <a href="/">
-                    ❓
-                </a>
-            </div>
-
-            <nav className="menu-nav">
-                <ul className="main-menu">
-                    {
-                        menu.map((el, index) => {
-                            let info = {
-                                key: index,
-                                href: el.href,
-                                text: el.name,
+        <>
+            <header
+                id="header"
+                ref={header}
+                className={
+                    scrollY > 800 ? 'on' : null
+                }
+                style={{ height: 90 }}
+            >
+                <div className="max-cover">
+                    <Logo></Logo>
+                    <nav className="menu-nav">
+                        <ul className="main-menu">
+                            {
+                                userInfo === undefined ? null :
+                                    userInfo.role === 1 ?
+                                        menu.map((el,index)=> {
+                                            // console.log(el)
+                                            if (el.admin===1)
+                                            return (
+                                                <MenuLi
+                                                    key={`admin_${index}`}
+                                                    href={el.href}
+                                                    children={el.name}
+                                                ></MenuLi>
+                                            )
+                                        }):null
+                                       
                             }
-
-                            if (el.menu_type === 'board') info.href = el.href + '/1'
-                            if (el.description !== "") info.description = el.description;
-                            if (el.custom === "fontawsome") info.text = <FontAwsome data={el.custom_comment} />;
-                            return (
-                                <List {...info} />
-                            )
-                        })
-                    }
-                </ul>
-            </nav>
-            <nav className="top-nav">
-                <LoginList
-                    loginCookieName={loginCookieName}
-                    token={x_token}
-                    userInfo={userInfo}
-                />
-            </nav>
-        </header>
+                            <li>
+                                <Link to="/">홈</Link>
+                            </li>
+                            {
+                                menu === undefined ? null
+                                    : menu.map((el, index) => {
+                                        let info;
+                                        let init = {
+                                            key: index,
+                                            href: el.href,
+                                            children: el.name,
+                                            role: el.role
+                                        }
+                                        if (el.depth === 0) info = { ...init }
+                                        if (el.depthChildren.length !== 0)
+                                            info = {
+                                                ...init,
+                                                depthChildren: el.depthChildren
+                                            }
+                                        if (el.menu_type === 'board') info.href = el.href + '/1'
+                                        if (el.description !== "") info.description = el.description;
+                                        // if (el.custom === "fontawsome") info.children = <FontAwsome data={el.custom_comment} />;
+                                        if (el.depth !== 1 && el.admin !== 1 && index !== 0)
+                                            return (
+                                                <MenuLi {...info}></MenuLi>
+                                            )
+                                    })
+                            }
+                        </ul>
+                    </nav>
+                    <nav className="top-nav">
+                        <LoginList
+                            loginCookieName={loginCookieName}
+                            userInfo={userInfo}
+                        />
+                    </nav>
+                </div>
+            </header>
+            {/* <div className="header_dummy"></div> */}
+        </>
     )
 }
 
+
+function MenuLi(props) {
+    const dc = props.depthChildren;
+    const noAction = (event) => {
+        // event.preventDefault();
+    }
+    return (
+        <li className={dc !== undefined ? 'depth_menu' : null}  >
+            <Link to={props.href} onClick={dc !== undefined ? noAction : null}>
+                {props.children}
+            </Link>
+            {
+                dc !== undefined ?
+                    <ul className={`depth1`}>
+                        <li className="depth1_li">
+                            <Link to={props.href}>
+                                {props.children}
+                            </Link>
+                        </li>
+                        {
+                            dc.map((el, index) => {
+                                return (
+                                    <li className="depth1_li" key={index}>
+                                        <Link to={el.href + '/1'}>
+                                            {el.name}
+                                        </Link>
+                                    </li>
+                                )
+                            })
+                        }
+                    </ul> : null
+            }
+        </li>
+    )
+}
 export default Header

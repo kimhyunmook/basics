@@ -1,14 +1,5 @@
 import axios from 'axios'
 
-export function writeBoard(dataSubmit, config) {
-    const request = axios.post(`/api/board/${config.name}/write`, dataSubmit)
-        .then(response => response.data)
-    return {
-        type: 'write_board',
-        payload: request
-    }
-}
-
 export function galleryWriteBoard(dataSubmit, config) {
     const request = axios.post(`/api/board/${config.name}/galleryWrite`, dataSubmit, {
             headers: {
@@ -22,17 +13,10 @@ export function galleryWriteBoard(dataSubmit, config) {
     }
 }
 
-export function listBoard(dataSubmit, config) {
-    const request = axios.get(`/api/board/list/${config.type}/${config.name}/${config.page}`, dataSubmit)
-        .then(response => response.data)
-    return {
-        type: 'list_board',
-        payload: request
-    }
-}
+
 
 export function lookContent(dataSubmit) {
-    const request = axios.post(`/api/board/list/${dataSubmit.name}/contents/${dataSubmit.w_num}`, dataSubmit)
+    const request = axios.post(`/api/board/${dataSubmit.name}/contents/${dataSubmit.w_num}`)
         .then(response => response.data)
     return {
         type: 'look_content',
@@ -40,17 +24,8 @@ export function lookContent(dataSubmit) {
     }
 }
 
-export function varValue(dataSubmit) {
-    const request = axios.post(`/api/board/list/${dataSubmit.name}/varValue/${dataSubmit.w_num}`, dataSubmit)
-     .then(response => response.data)
-    return {
-        type: 'hit',
-        payload: request
-    }
-}
-
 export function modify(dataSubmit, config) {
-    const request = axios.post(`/api/board/list/${config.name}/modify/${config.w_num}`, dataSubmit)
+    const request = axios.post(`/api/board/${config.name}/modify/${config.w_num}`, dataSubmit)
         .then(request => request.data)
     return {
         type: 'modify_board',
@@ -66,18 +41,18 @@ export function deleteContent(dataSubmit, config) {
         payload: request
     }
 }
-    
-export function replyAction(dataSubmit, config) {
-    const request = axios.post(`/api/board/${dataSubmit.name}/reply/${dataSubmit.w_num}`, dataSubmit)
+
+export function replyWrite(dataSubmit) {
+    const request = axios.post(`/api/board/${dataSubmit.name}/replyWrite/${dataSubmit.w_num}`, dataSubmit)
         .then(request => request.data)
     return {
         type: 'reply',
-        payload:request
+        payload: request
     }
 }
 
 export function replyList(dataSubmit) {
-    const request = axios.post(`/api/board/list/${dataSubmit.name}/reply/${dataSubmit.w_num}`,dataSubmit)
+    const request = axios.post(`/api/board/${dataSubmit.name}/reply/${dataSubmit.w_num}`, dataSubmit)
         .then(request => request.data)
     return {
         tpye: 'reply_list',
@@ -86,7 +61,7 @@ export function replyList(dataSubmit) {
 }
 
 export function replyDelete(dataSubmit) {
-    const request = axios.delete(`/api/board/list/${dataSubmit.name}/replyDelete/${dataSubmit.w_id}`,dataSubmit)
+    const request = axios.delete(`/api/board/${dataSubmit.name}/replyDelete/${dataSubmit.w_id}`, dataSubmit)
         .then(request => request.data)
     return {
         tpye: 'reply_delete',

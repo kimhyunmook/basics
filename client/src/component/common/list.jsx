@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom"
 import { useState } from "react";
-import configJson from '../../json/site_config.json'
 import Description from "./description";
-import { MemberConfirm } from "../../actions/tool_action";
+import { useSelector } from "react-redux";
 // import { polish } from '../../actions/effect';
 
 function List({ text, href, class_name, depth, depth_content, description, auth }) {
     let targetHref;
+    const store = useSelector(state => state);
+    const menu = store.menuInfo.data;
 
     if (href === undefined) targetHref = '#';
     else targetHref = href;
@@ -34,10 +35,11 @@ function List({ text, href, class_name, depth, depth_content, description, auth 
     function Depth() {
         return (
             <div className={`depth1 ${dis}`}>
-                { depth_content }
+                {depth_content}
             </div>
         )
     }
+
 
     return (
         <li
@@ -47,12 +49,28 @@ function List({ text, href, class_name, depth, depth_content, description, auth 
         >
             <Link
                 to={targetHref}
-                onClick={depth === true ? depthClick : null}
-            >{text}</Link>
-            {depth === true ? <Depth /> : null}
-            {description !== undefined ?
-                description !== "" ? <Description description={description} /> : null
-                : null}
+
+            // onClick={depth === true ? depthClick : null}
+            >
+                {text}
+            </Link>
+            {/* {
+                menu.map((el, index) => {
+                    let depth = []
+                    if (el.depth !== 0) {
+                        depth.push(el);
+                    }
+                    console.log(depth);
+                    
+                    if (el.menu_id == depth.parent)
+                        // if (el.parent === el.menu_id)
+                        return (
+                            <div key={index}>
+                                {depth.name}
+                            </div>
+                        )
+                })
+            } */}
         </li>
     )
 }

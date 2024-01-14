@@ -9,7 +9,9 @@ CREATE TABLE `?` (
 	`w_time` VARCHAR(20) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
 	`user_id` VARCHAR(30) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
 	`hit` INT(10) NOT NULL DEFAULT '0',
+	`reply_count` INT(10) NOT NULL DEFAULT '0',
 	`board_type` VARCHAR(30) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`notice` VARCHAR(20) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
 	PRIMARY KEY (`w_id`) USING BTREE
 )
 COLLATE='utf8mb4_0900_ai_ci'

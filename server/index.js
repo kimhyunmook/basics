@@ -1,6 +1,11 @@
 const express = require('express');
-const port = require('../port');
-const app = express();
+// import express from 'express';
+
+//es6
+// import userRouter from './router/userRouter';
+// import boardRouter from './router/boardRouter';
+// import settingRouter from './router/settingRouter';
+// import admRouter from './router/admRouter';
 
 //Router
 const userRouter = require('./router/userRouter');
@@ -9,6 +14,9 @@ const settingRouter = require('./router/settingRouter');
 const admRouter = require('./router/admRouter');
 // const xlsxUpload = require('./router/xlsxUpload');
 
+
+const port = require('../port');
+const app = express();
 app.use(express.json())
 app.use(express.urlencoded({
     extended: true
@@ -16,7 +24,7 @@ app.use(express.urlencoded({
 
 app.use('/api/users', userRouter)
 app.use('/api/board', boardRouter)
-app.use('/api/setting',settingRouter)
+app.use('/api/setting', settingRouter)
 app.use('/api/adm', admRouter)
 // app.use('/api/upload', xlsxUpload);
 app.all('*', (req, res) => {

@@ -1,25 +1,30 @@
 import { useState, useEffect } from "react";
-import { adminAction } from "../../actions/adm_action";
-import { Overlap } from "./ui";
+import { Overlap, DepthUi } from "./ui";
 import { FontAwsome } from "../common/fontawsome";
+import { useDispatch } from "react-redux";
+import { _Condtion, _CreateMenu } from "../../store/menuSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function ADM_Board(props) {
     let body;
-    const submit = (event) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const submit = async (event) => {
         event.preventDefault();
         // `name`,`href`,`menu_type`,`description`,`depth`,`admin`,`parent`,`custom`,`custom_comment`
         body = {
-            url: 'createboard',
+            url: '/adm/createboard',
             name: name,
-            table_name: 'board_'+href,
+            table_name: 'board_' + href,
             href: '/board/' + href,
             menu_type: 'board',
             board_type: board_type,
             description: description,
             custom: custom,
             custom_comment: customCommentValue,
-            defaultCustomComment: 'fa-chalkboard'
-            // depth:0,
+            parent: depthTarget,
+            defaultCustomComment: 'fa-chalkboard',
+            depth: depth,
             // admin:0,
         }
         if (description === "" || description === undefined) {
@@ -28,13 +33,12 @@ export default function ADM_Board(props) {
         if (customCommentValue === "" || customCommentValue === undefined) {
             body.custom_comment = "fa-chalkboard"
         }
-        adminAction(body).payload.then(res => {
-            if (res !== 'table overlap')
-                window.location.reload();
-            else console.error(res)
-        })
-    }
 
+        dispatch(_CreateMenu(body));
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000)
+    }
     // 이름
     const [name, setname] = useState("");
     function nameHandler(event) {
@@ -100,6 +104,18 @@ export default function ADM_Board(props) {
         setcustomCommentValue(event.target.value)
     }
 
+    // depth
+    const [depth, setDepth] = useState(0);
+    function depthHandler(value) {
+        setDepth(value)
+    }
+
+    const [depthTarget, setDepthTarget] = useState(0);
+    function depthTargetHandler(value) {
+        setDepthTarget(value)
+        console.log(value)
+    }
+
     // Setting Value
     const nameSetting = {
         type: 'input',
@@ -147,7 +163,6 @@ export default function ADM_Board(props) {
         onChange: customCommentHandler,
         placeholder: customComment.placeholder,
         icon: <FontAwsome data={customCommentValue} />,
-        // style: customComment.style
     }
     const coverSetting = {
         title: '게시판 생성',
@@ -156,7 +171,7 @@ export default function ADM_Board(props) {
         onSubmit: submit
     }
 
-    
+
     useEffect(() => {
     }, []);
 
@@ -176,7 +191,6 @@ export default function ADM_Board(props) {
             <Overlap {...customCommentSetting} >
                 {
                     FontAwsome({ type: 'data' })._data.map((el, index) => {
-
                         return (
                             <option value={el[0]} key={index}>
                                 {el[0]}
@@ -184,8 +198,8 @@ export default function ADM_Board(props) {
                         )
                     })
                 }
-
             </Overlap>
+            <DepthUi upState={depthHandler} upState2={depthTargetHandler}></DepthUi>
         </Overlap>
     )
 

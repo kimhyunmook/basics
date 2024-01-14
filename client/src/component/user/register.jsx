@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import Container from '../common/container';
 import { RegisterUi, Li, Gender } from './ui/userUi';
 import { FontAwsome } from '../common/fontawsome';
 import axios from 'axios';
+import { _Register } from '../../store/userSlice';
+// import { useDispatch } from 'react-redux';
+import { Container2 } from '../common/commonUi';
+import util from '../../util';
 
 function Register() {
     const navigate = useNavigate();
@@ -13,10 +16,13 @@ function Register() {
     const [_Password, setPassword] = useState("");
     const [_Password2, setPassword2] = useState("");
     const [Name, setName] = useState("");
+    const [nickName, setNickName] = useState("");
     const [Email, setEmail] = useState("");
     const [Phone, setPhone] = useState("");
-    const [gender, setGender] = useState("");
+    // const [gender, setGender] = useState("");
     const form = document.forms[0];
+    // const dispatch = useDispatch();
+
     // change handler
     const onIdChangeHandler = (event) => {
         let value = event.currentTarget.value
@@ -39,15 +45,19 @@ function Register() {
         setEmail(value)
     }
     const onPhoneChangeHandler = (event) => {
-        let value = event.currentTarget.value
+        let value = util.phoneNumber(event);
         setPhone(value)
+    }
+    const onNickNameChangeHandler = (event) => {
+        let value = event.currentTarget.value
+        setNickName(value)
     }
 
     const onGenderChangehandler = (event) => {
         let value = event.currentTarget.value;
     }
 
-    const onSubmitHandler = (event) => {
+    const onSubmitHandler = async (event) => {
         event.preventDefault();
 
         if (_Password !== _Password2) {
@@ -60,19 +70,28 @@ function Register() {
             id: _Id,
             password: _Password,
             name: Name,
+            nickName:nickName,
             email: Email,
             phone: Phone,
             gender: form.gender.value,
         }
-
+        // await dispatch(_Register(body));
+        // await navigate('/');
         axios.post('/api/users/signup', body)
             .then(res => {
-                if (res.data.signUp) navigate('/')
+                if (res.data.signUp) {
+                    alert('안녕하세요 회원 가입을 축하드립니다.')
+                    navigate('/')
+                }
+                else {
+                    if (res.data.errorType === 'idOverlap')
+                        alert('아이디 중복');
+                }
             })
     }
 
     return (
-        <Container>
+        <Container2 info={{className:"container-normal"}}>
             <RegisterUi name="회원가입" submit={onSubmitHandler} submitBtn="회원가입">
                 <Li name="id">
                     <input required type="text" value={_Id} name="id" placeholder="ID" onChange={onIdChangeHandler} />
@@ -83,11 +102,15 @@ function Register() {
                 <Li name="password2">
                     <input required type="password" value={_Password2} name="password2" placeholder='Password 확인' onChange={onPasswordChangeHandler2} />
                 </Li>
-                <Li name="phone">
-                    <input required type="phone" value={Phone} name="phone" placeholder='Phone' onChange={onPhoneChangeHandler} />
-                </Li>
                 <Li name="name">
                     <input required type="text" value={Name} name="name" placeholder='Name' onChange={onNameChangeHandler} />
+                </Li>
+                <Li name="nickname">
+                    <input required type="text" value={nickName} name="nickname" placeholder='Nick Name' onChange={onNickNameChangeHandler} />
+                </Li>
+
+                <Li name="phone">
+                    <input required type="phone" value={Phone} maxLength={13} name="phone" placeholder='Phone' onChange={onPhoneChangeHandler} />
                 </Li>
                 <Li name="gender">
                     <Gender checked value="남자" gender="man" change={onGenderChangehandler}>
@@ -101,7 +124,7 @@ function Register() {
                     <input required type="email" value={Email} name="email" placeholder='E-mail' onChange={onEmailChangeHandler} />
                 </Li>
             </RegisterUi>
-        </Container>
+        </Container2>
     )
 }
 

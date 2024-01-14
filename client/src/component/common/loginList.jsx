@@ -1,16 +1,18 @@
 import List from './list'
-import { faCircleXmark, faUser, faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCircleXmark, faFaceSmileWink, faScrewdriverWrench, faUser, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { _Logout } from '../../store/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 function LoginList(props) {
-    const reducer = useSelector(state => state);
+    const [icon, setIcon] = useState("😊");
+    const store = useSelector(state => state);
+    const userInfo = store.userInfo;
     const navigate = useNavigate();
-    const userInfo = reducer.userInfo;
     const dispatch = useDispatch();
+
     const logoutHandle = async (event) => {
         event.preventDefault();
         let body = {
@@ -22,19 +24,32 @@ function LoginList(props) {
     }
 
     useEffect(() => {
-    }, [reducer])
+        if (userInfo.login) {
+            // if (userInfo.data.gender === "남자")
+            // setIcon('🧑');
+            // else if (userInfo.data.gender === "여자")
+            // setIcon('👧');
+        }
+    }, [])
 
     let loginStyle = {
-        width: '200px'
     }
 
     if (userInfo.login) {
         return (
-            <ul className={'login-box'} style={loginStyle}>
+            <ul
+                className={'login-box'}
+                style={loginStyle}
+            >
                 <li className='id'>
-                    😉
+                    <b>
+                        {
+                            userInfo.data.role === 1 ?
+                                <FontAwesomeIcon icon={faScrewdriverWrench} /> : icon
+                        }
+                    </b>
                     <b className='id-text'>
-                        {userInfo.data.id}
+                        {userInfo.data.nickname}
                     </b>
                 </li>
                 <li className='icon-box'>
@@ -58,7 +73,7 @@ function LoginList(props) {
         return (
             <ul className={'login-box'} style={loginStyle}>
                 <List text={<FontAwesomeIcon icon={faUserPlus} />} href={'/register'} description="회원가입" />
-                <List text={`login`} href={`/login`} class_name={`login`} />
+                <List text={`login`} href={`/login`} class_name={``} />
             </ul>
         )
     }

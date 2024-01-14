@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from "react-router-dom";
 import { _Login } from "../../store/userSlice";
-import Container from "../common/container";
+import { Container2 } from "../common/commonUi";
 import { FontAwsome } from "../common/fontawsome";
 
 function Login() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
+    const store = useSelector(state => state);
+    const userInfo = store.userInfo;
     const [login_Id, setLoginId] = useState("");
     const [login_Password, setLoginPassword] = useState("");
 
@@ -20,23 +21,25 @@ function Login() {
         let value = event.currentTarget.value
         setLoginPassword(value)
     }
-    const reducer = useSelector(state => state);
+    // const reducer = useSelector(state => state);
 
-    const loginHandler = (event) => {
+    const loginHandler = async (event) => {
         event.preventDefault();
         let body = {
             id: login_Id,
             password: login_Password
         }
         dispatch(_Login(body));
+        // if (userInfo.message === 'ID_NO_EXIST' || userInfo.message === 'PW_ERROR')
+        // await alert('ID or password 가 틀립니다.')
     }
 
     useEffect(() => {
-        if (reducer.userInfo.login) navigate('/')
-    }, [reducer])
+        if (userInfo.login) navigate('/')
+    }, [store])
 
     return (
-        <Container>
+        <Container2 info={{ onePage: true }}>
             <div className="login">
                 <h2>
                     로그인
@@ -55,10 +58,10 @@ function Login() {
                     </div>
                 </form>
                 <div className="supplementary-services">
-                    <Link to={""}>
+                    <Link to={"/login/search?type=id"}>
                         아이디 찾기
                     </Link>
-                    <Link to={""}>
+                    <Link to={"/login/search?type=password"}>
                         비밀번호 찾기
                     </Link>
                     <Link to={"/register"}>
@@ -66,7 +69,7 @@ function Login() {
                     </Link>
                 </div>
             </div>
-        </Container>
+        </Container2 >
     )
 }
 

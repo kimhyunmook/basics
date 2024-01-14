@@ -1,15 +1,14 @@
 import { FontAwsome } from "../common/fontawsome"
+import { BtnArea } from "../common/commonUi"
 
-function Reply ({id, text, textEvent, click}) {
-    return(
+function Reply({ id, text, textEvent, click }) {
+    return (
         <div className="reply-insert">
             <p className="userId">
-                { id }
+                {id}
             </p>
             <textarea name="content" value={text} cols="50" rows="5" onChange={textEvent}></textarea>
-            <button className='reply-button' onClick={ click }>
-                <FontAwsome data={"fa-pen-nib"} />
-            </button>
+            <BtnArea className='replay-button' info={{ Name: <FontAwsome data={"fa-pen-nib"} />, Click: click }} />
         </div>
     )
 }

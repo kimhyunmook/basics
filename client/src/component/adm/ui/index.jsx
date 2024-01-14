@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
+import { useSelector } from "react-redux"
 
 /**
  * style : li -> style
@@ -57,7 +58,47 @@ export function Overlap(props) {
     )
 }
 
-export function  Overlap_Board (body) {
-    
-    // return()
-} 
+
+export function DepthUi(props) {
+    const [flag, setFlag] = useState(false);
+    const store = useSelector(state => state);
+    const menuInfo = store.menuInfo.data;
+    console.log(menuInfo);
+    const change = (event) => {
+        event.preventDefault();
+        if (event.target.value === '1') {
+            setFlag(true)
+        } else {
+            setFlag(false)
+        }
+        props.upState(event.target.value);
+    }
+    const change2 = (event) => {
+        event.preventDefault();
+        props.upState2(event.target.value)
+    }
+    return (
+        <>
+            <Overlap type='select' select_name='depth' label_id='depth' label_text='DEPTH' onChange={change}>
+                <option value="0">NO</option>
+                <option value="1">YES</option>
+            </Overlap>
+            {
+                flag ?
+                    <Overlap type='select' select_name='depth_target' label_id='depth_target' label_text='DEPTH_TARGET' onChange={change2}>
+                        {
+                            menuInfo.map((el, index) => {
+                                if (el.depth === 0)
+                                    return (
+                                        <option value={el.menu_id} key={`option_${index}`}>
+                                            {el.name}
+                                        </option>
+                                    )
+                            })
+                        }
+                    </Overlap>
+                    : null
+            }
+        </>
+    )
+}

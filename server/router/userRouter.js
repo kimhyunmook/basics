@@ -1,155 +1,152 @@
 const express = require('express');
-const router = express.Router();
-const db = require('../db');
-const bcrypt = require('bcrypt');
-// const saltRounds = 10 // 암호화 처리하는 속도인가봄
-const cookieParser = require('cookie-parser');
-const {
-    auth
-} = require('../middleware/auth');
+// import express from 'express';
 
+const router = express.Router();
+const {
+    db,
+    db2
+} = require('../db');
+const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
 const {
     readSQL,
     saltRounds,
+    errorMessage,
+    correctMessage,
+    commaString,
+    pw_askiicode,
+    sqlText,
 } = require('../util');
-
 router.use(cookieParser());
 
-router.post('/signup', (req, res) => {
-    const param = Object.values(req.body);
+router.post('/signup', async (req, res) => {
+    const routerName = req.originalUrl;
+    let message, sql, query, result, hash, res_data
+    let param = Object.values(req.body);
     param.push(0); // add role
-    const id = param[0]
-    let sql = `
-        SELECT * 
-        FROM users 
-        WHERE id=?
-    `
-    db.query(sql, id, async (err, rows, fileds) => {
-        if (err) throw err;
-        let result
-
-        if (rows.length >= 1) {
-            result = {
+    const id = param[1]
+    try {
+        sql = `SELECT * FROM users WHERE id=?`
+        const conn = await db2.getConnection();
+        query = await conn.query(sql, id);
+        result = query[0][0]
+        if (result !== undefined) {
+            message = 'ID overlap'
+            res_data = {
                 signUp: false,
-                errType: 'ID overlap'
+                error: message,
+                errorType: 'idOverlap'
             }
-        } else {
-            result = {
-                signUp: true
-            }
-            bcrypt.hash(param[1], saltRounds, (err1, hash) => {
-                if (err1) throw err1;
-                param[1] = hash;
-                db.query(readSQL('user/insert.sql'), param, (err2, rows2) => {
-                    if (err2) throw err2;
-                });
-            });
-        }
 
-        await res.status(200).json(result)
-    });
+        } else {
+            param[1] = await bcrypt.hashSync(param[1], saltRounds)
+            message = 'REGISTER SUCCESS';
+
+            await conn.query(readSQL('user/insert.sql'), param);
+            res_data = {
+                signUp: true,
+                message
+            }
+        }
+        res.status(200).json(res_data)
+        await conn.release();
+        correctMessage(routerName, message)
+    } catch (error) {
+        errorMessage(routerName, error)
+    }
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
+    const routerName = req.originalUrl;
     const id = req.body.id;
     const password = req.body.password;
     let param = [
         id,
         password
     ];
-    var sql = `
-        SELECT *
-        FROM users 
-        WHERE id=?
-    `;
-    db.query(sql, param, (err, rows, fileds) => {
-        if (err) throw err;
-        if (rows.length === 0) {
+    let sql = `SELECT * FROM users WHERE id=?`;
+    let conn = await db2.getConnection();
+    let message = '';
+    let search, searchId, loginToken
+    try {
+        search = await conn.query(sql, id);
+        searchId = await search[0][0]
+        if (searchId === undefined) {
+            message = 'ID_NO_EXIST';
+            errorMessage(routerName, message);
             return res.status(200).json({
                 login: false,
-                message: 'ID no exit'
-            })
+                message,
+                data: {}
+            });
         }
-
-        var match = bcrypt.compareSync(param[1], rows[0].password);
+        let match = await bcrypt.compareSync(param[1], searchId.password);
         if (match) {
-            let loginToken = Math.floor(Math.random() * 100000).toString() // token 생성
-            loginToken = bcrypt.hashSync(loginToken, 3) + '/id=' + rows[0].id
-
-            // cookie token 저장
-            res.cookie(`x_token`, loginToken, {
-                expries: new Date(),
+            message = `ID: ${id} , login success`;
+            correctMessage(routerName, message);
+            loginToken = Math.floor(Math.random() * 100000).toString();
+            loginToken = bcrypt.hashSync(loginToken, 3) + `/id=` + searchId;
+            res.cookie('login_token', loginToken, {
+                expires: new Date(),
                 path: '/'
             })
-
-            //db에 token 저장
-            sql = `
-                UPDATE users 
-                SET login_token=? 
-                WHERE id=?
-            `;
-            param = [
-                loginToken,
-                id
-            ];
-            db.query(sql, param, (err1) => {
-                if (err1) throw err1;
-                sql = `SELECT * FROM users WHERE id=?`;
-                db.query(sql, [id], (err2, rows) => {
-                    if (err2) throw err2
-                    res.status(200).json({
-                        login: true,
-                        data: rows[0]
-                    })
-                })
-            })
-
-        } else
-            res.status(200).json({
+            sql = `UPDATE users SET login_token=? WHERE id=?`;
+            await conn.query(sql, param)
+            await res.status(200).json({
+                login: true,
+                data: searchId,
+                message,
+            });
+        } else {
+            message = 'PW_ERROR'
+            await res.status(200).json({
                 login: false,
-                message: 'PW error'
+                data: {},
+                message: message,
             })
-
-    });
+            await errorMessage(routerName, message)
+        }
+    } catch (error) {
+        errorMessage(router, error);
+    }
 });
 
 router.post('/logout', async (req, res) => {
+    const routerName = req.originalUrl
     const id = req.body.id;
-    let sql = `
-        SELECT * 
-        FROM users
-        WHERE id=?
-    `;
-    let param = id
-    db.query(sql, param, (err) => {
-        if (err) throw err;
-
-        sql = `
-            UPDATE users 
-            SET login_token=null 
-            WHERE id=? 
-        `;
-        param = id
-        db.query(sql, param, (err1) => {
-            if (err1) throw err1;
-            res.status(200).json({
-                login: false,
-                data: null,
-            })
+    let sql = `SELECT * FROM users WHERE id=?`;
+    let conn = await db2.getConnection();
+    let search, logOutId
+    try {
+        search = await conn.query(sql, id);
+        logOutId = search[0][0];
+        sql = `UPDATE users SET login_token=null WHERE id=?`;
+        await conn.query(sql, id);
+        let message = 'LOGOUT_SUCCESS';
+        await res.status(200).json({
+            login: false,
+            message,
+            data: {}
         })
-    })
+        await correctMessage(routerName, `ID: ${id} , logout success`);
+
+
+    } catch (error) {
+        errorMessage(routerName, error);
+    }
 })
 
 router.post('/edit', (req, res) => {
-    var sql = `
+    let sql = `
         UPDATE users 
-        SET password=?, phone=?, email=?
+        SET password=?, phone=?, email=?, nickname=?
         WHERE id=?
     `;
     let param = [
         req.body.password,
         req.body.phone,
         req.body.email,
+        req.body.nickname,
         req.body.id
     ]
     let result;
@@ -173,7 +170,8 @@ router.post('/edit', (req, res) => {
     });
 });
 
-router.post('/delete', (req, res) => {
+router.post('/delete', async (req, res) => {
+    const routerName = req.originalUrl;
     let sql = `
         DELETE FROM users
         WHERE id=?
@@ -181,12 +179,82 @@ router.post('/delete', (req, res) => {
     let param = [
         req.body.id
     ]
-    db.query(sql, param, (err) => {
-        if (err) throw err;
-        res.status(200).json({
-            delete: true,
-        })
-    })
+    const conn = await db2.getConnection();
+    try {
+        await conn.query(sql, param[0]);
+        await correctMessage(routerName, `Id: ${param[0]}, ID delete`);
+
+        await conn.release();
+    } catch (error) {
+        errorMessage(routerName, error)
+    }
+})
+
+router.post('/search/:type', async (req, res) => {
+    const routerName = req.originalUrl;
+    const conn = await db2.getConnection();
+    let sql;
+    let param = [];
+    let key = Object.values(req.body);
+    let type;
+    let result = {};
+    param = key;
+    console.log(param, req.params)
+    try {
+        switch (req.params.type) {
+            case '1':
+                type = 'id';
+                sql = sqlText.SELECT('users', 'name=? AND email=?')
+                break;
+            case '2':
+                type = 'password';
+                sql = sqlText.SELECT('users', 'id=? AND name=? AND email=?')
+                break;
+        }
+        console.log(type);
+        let searchInfo = await conn.query(sql, param);
+        searchInfo = searchInfo[0][0];
+        if (searchInfo === undefined) {
+            res.send({
+                type,
+                result: 'fail'
+            })
+            return
+        }
+
+        if (type === 'id') {
+            result = {
+                type,
+                result: "success",
+                id: searchInfo.id
+            }
+        }
+        if (type === 'password') {
+            console.log(1)
+            let pwLen = pw_askiicode().length;
+            let newPw = '';
+            for (i = 0; i < 8; i++) {
+                let rand = Math.floor(Math.random() * pwLen);
+                newPw += pw_askiicode(rand);
+            }
+
+            let pw = bcrypt.hashSync(newPw, saltRounds);
+            sql = sqlText.UPDATE('users', `password='${pw}'`, `id='${searchInfo.id}'`);
+            await conn.query(sql);
+            result = {
+                type,
+                result: 'success',
+                id: searchInfo.id,
+                password: newPw,
+            }
+        }
+        res.send(result);
+        await correctMessage(routerName, `Search ${type}`);
+        await conn.release();
+    } catch (error) {
+        errorMessage(routerName, error);
+    }
+
 })
 
 module.exports = router;
